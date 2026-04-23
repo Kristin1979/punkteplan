@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Punkteplan">
+<title>🌸 Punkteplan</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(135deg,#fff0f5,#f5f0ff);min-height:100vh;padding-bottom:80px;overscroll-behavior:none}
+.wrap{max-width:440px;margin:0 auto;padding:0 12px}
+/* HEADER */
+.hdr{text-align:center;padding:16px 0 10px}
+.hdr h1{font-size:22px;font-weight:800;color:#be185d;margin-top:2px}
+.hdr p{font-size:11px;color:#a78bfa}
+/* BUDGET */
+.bg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.bc{background:white;border-radius:16px;padding:11px;text-align:center;box-shadow:0 1px 6px rgba(0,0,0,.06);border:1px solid #f3f4f6}
+.bc .lbl{font-size:10px;color:#9ca3af;margin-bottom:2px}
+.bc .val{font-size:28px;font-weight:800}
+.bc .sub{font-size:10px;color:#d1d5db;margin-top:1px}
+.bar{height:3px;background:#f3f4f6;border-radius:2px;margin-top:5px;overflow:hidden}
+.bar-fill{height:100%;border-radius:2px;transition:width .3s}
+/* TABS */
+.tabs{display:flex;background:white;border-radius:100px;padding:3px;margin-bottom:12px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.tab{flex:1;padding:7px 2px;border:none;background:none;border-radius:100px;font-size:11px;font-weight:600;color:#9ca3af;cursor:pointer;transition:all .2s}
+.tab.on{background:#ec4899;color:white}
+.subtabs{display:flex;background:white;border-radius:100px;padding:3px;margin-bottom:10px;border:1px solid #f3f4f6}
+/* CARDS */
+.card{background:white;border-radius:18px;padding:14px;box-shadow:0 1px 8px rgba(0,0,0,.06);border:1px solid #f3f4f6;margin-bottom:10px}
+.card-title{font-size:13px;font-weight:700;color:#be185d;margin-bottom:8px}
+/* INPUTS */
+input[type=text],input[type=number],input[type=date],select{width:100%;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:13px;background:white;color:#374151;outline:none;-webkit-appearance:none}
+input:focus,select:focus{border-color:#f9a8d4}
+.inp-label{font-size:10px;color:#9ca3af;display:block;margin-bottom:3px}
+/* BUTTONS */
+.btn{width:100%;padding:11px;border-radius:12px;background:#ec4899;color:white;font-weight:700;font-size:13px;border:none;cursor:pointer}
+.btn:active{opacity:.85}
+.btn-sm{padding:8px 14px;border-radius:10px;background:#ec4899;color:white;font-weight:700;font-size:12px;border:none;cursor:pointer;white-space:nowrap}
+/* CATEGORIES */
+.cats{display:flex;gap:5px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{flex-shrink:0;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:600;border:1px solid #e5e7eb;background:white;color:#6b7280;cursor:pointer}
+.cat.on{background:#ec4899;color:white;border-color:#ec4899}
+/* FOOD LIST */
+.flist{max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:5px}
+.frow{display:flex;align-items:center;justify-content:space-between;background:white;border-radius:12px;padding:9px 11px;box-shadow:0 1px 4px rgba(0,0,0,.05);border:1px solid #f3f4f6;cursor:pointer}
+.frow:active{background:#fdf2f8}
+.fn{font-size:12px;color:#374151;line-height:1.3}
+.fs{font-size:10px;color:#d1d5db;margin-top:1px}
+.fadd{width:26px;height:26px;border-radius:50%;background:#ec4899;color:white;font-size:17px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+/* PTS COLORS */
+.cg{color:#16a34a}.cp{color:#db2777}.co{color:#d97706}.cr{color:#dc2626}
+/* LOG */
+.lrow{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:9px;background:#f9fafb;margin-bottom:4px}
+.ltotal{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;border-radius:11px;background:#fdf2f8;border:1px solid #fbcfe8;margin-top:6px}
+/* SPORT */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+.sc{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:13px;padding:10px;text-align:center;cursor:pointer}
+.sc:active{background:#dcfce7}
+.sn{font-size:11px;font-weight:600;color:#166534;line-height:1.3}
+.sp{font-size:20px;font-weight:800;color:#16a34a;margin-top:2px}
+.slog-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:9px;background:#f0fdf4;margin-bottom:4px}
+/* WEIGHT HISTORY */
+.wrow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f9fafb;font-size:12px}
+.wrow:last-child{border-bottom:none}
+.dbadge{font-size:10px;padding:2px 6px;border-radius:100px;font-weight:600}
+.dd{background:#d1fae5;color:#065f46}.du{background:#fee2e2;color:#991b1b}.ds{background:#f3f4f6;color:#6b7280}
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center}
+.modal{background:white;border-radius:22px 22px 0 0;width:100%;max-width:440px;padding:22px}
+.stepper{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.step-btn{width:44px;height:44px;border-radius:50%;background:#fce7f3;color:#db2777;font-size:22px;font-weight:700;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-inp-w{flex:1;position:relative}
+.step-inp{width:100%;text-align:center;font-size:22px;font-weight:800;color:#374151;border:2px solid #fbcfe8;border-radius:12px;padding:10px 34px 10px 10px;outline:none}
+.step-inp:focus{border-color:#f472b6}
+.step-unit{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;color:#9ca3af}
+.qrow{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin-bottom:10px}
+.qb{padding:4px 10px;border-radius:100px;font-size:11px;font-weight:600;border:1px solid #e5e7eb;background:white;color:#6b7280;cursor:pointer}
+.qb.on{background:#ec4899;color:white;border-color:#ec4899}
+.prev-box{background:#fdf2f8;border:1px solid #fbcfe8;border-radius:12px;padding:10px;text-align:center;margin-bottom:12px}
+.mbtns{display:flex;gap:8px}
+.mcl{flex:1;padding:11px;border-radius:11px;border:1px solid #e5e7eb;background:white;color:#6b7280;font-size:13px;font-weight:600;cursor:pointer}
+.mok{flex:1;padding:11px;border-radius:11px;background:#ec4899;color:white;font-size:13px;font-weight:700;border:none;cursor:pointer}
+/* MEAS */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px}
+.mhrow{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #f9fafb}
+.mhrow:last-child{border-bottom:none}
+.mbadge{display:inline-flex;align-items:center;gap:4px;border-radius:8px;padding:3px 8px;margin:2px}
+/* CHART */
+canvas{width:100%!important}
+/* INFO */
+.info-ok{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:7px 11px;font-size:11px;color:#166534;margin-top:7px}
+.info-blue{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:7px 11px;font-size:11px;color:#3b82f6;margin-bottom:7px}
+.hidden{display:none!important}
+/* RESULT BOX */
+.res-box{background:#fdf2f8;border:1px solid #fbcfe8;border-radius:13px;padding:14px;text-align:center;margin-top:8px}
+/* LEGEND */
+.leg{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:10px;color:#6b7280}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+/* PWA purple section */
+.custom-sport-box{background:#f5f3ff;border:1px solid #ddd6fe;border-radius:14px;padding:12px;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <div style="font-size:26px">🌸</div>
+    <h1>Punkteplan</h1>
+    <p>Dein persönliches Abnehmprogramm</p>
+  </div>
+
+  <!-- BUDGET -->
+  <div class="bg">
+    <div class="bc"><div class="lbl">Heute noch</div><div class="val" id="b-rem" style="color:#db2777">—</div><div class="sub" id="b-sub">Gewicht eintragen</div><div class="bar"><div class="bar-fill" id="b-bar" style="width:0%;background:#f472b6"></div></div></div>
+    <div class="bc"><div class="lbl">Sport heute</div><div class="val" id="b-sport" style="color:#16a34a">+0</div><div class="sub">Zusatzpunkte</div><div class="bar"><div class="bar-fill" id="b-sport-bar" style="width:0%;background:#4ade80"></div></div></div>
+  </div>
+  <div class="bg">
+    <div class="bc"><div class="lbl">Wochenextra</div><div class="val" id="b-wex" style="color:#7c3aed">21</div><div class="sub">von 21 Pkt.</div><div class="bar"><div class="bar-fill" id="b-wex-bar" style="width:0%;background:#a78bfa"></div></div></div>
+    <div class="bc"><div class="lbl">Budget/Tag</div><div class="val" id="b-day" style="color:#db2777">38</div><div class="sub">ohne Sport</div></div>
+  </div>
+
+  <!-- MAIN TABS -->
+  <div class="tabs">
+    <button class="tab on" onclick="showTab('essen',this)">🍽</button>
+    <button class="tab" onclick="showTab('sport',this)">🏃</button>
+    <button class="tab" onclick="showTab('gewicht',this)">⚖️</button>
+    <button class="tab" onclick="showTab('masse',this)">📏</button>
+    <button class="tab" onclick="showTab('tagebuch',this)">📋</button>
+  </div>
+
+  <!-- PAGE ESSEN -->
+  <div id="page-essen">
+    <div class="subtabs">
+      <button class="tab on" style="font-size:11px" onclick="showSub('liste',this)">Liste</button>
+      <button class="tab" style="font-size:11px" onclick="showSub('manuell',this)">Manuell</button>
+    </div>
+    <div id="sub-liste">
+      <input type="text" id="srch" placeholder="🔍 Suchen..." oninput="filterF(this.value)" style="margin-bottom:8px">
+      <select id="cats" onchange="selCat(this.value)" style="width:100%;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:13px;background:white;color:#374151;outline:none;margin-bottom:8px"></select>
+      <div class="info-blue">💡 + = direkt hinzufügen · Name antippen = Menge anpassen</div>
+      <div class="flist" id="flist"></div>
+      <p style="text-align:center;font-size:10px;color:#d1d5db;margin-top:6px">🟢 0 · 🩷 1–3 · 🟠 4–7 · 🔴 8+</p>
+    </div>
+    <div id="sub-manuell" class="hidden">
+      <div class="card">
+        <div class="card-title">🧮 Nährwerte von der Verpackung</div>
+        <p style="font-size:11px;color:#9ca3af;margin-bottom:10px">Gib die Werte pro Portion ein:</p>
+        <input type="text" id="mn-name" placeholder="Name (optional)" style="margin-bottom:7px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px">
+          <div><span class="inp-label">Kalorien (kcal)</span><input type="number" id="mn-k" placeholder="0" min="0"></div>
+          <div><span class="inp-label">Eiweiß (g)</span><input type="number" id="mn-p" placeholder="0" min="0"></div>
+          <div><span class="inp-label">Zucker (g)</span><input type="number" id="mn-s" placeholder="0" min="0"></div>
+          <div><span class="inp-label">Gesätt. Fett (g)</span><input type="number" id="mn-sf" placeholder="0" min="0"></div>
+          <div style="grid-column:1/-1"><span class="inp-label">Ballaststoffe (g)</span><input type="number" id="mn-f" placeholder="0" min="0"></div>
+        </div>
+        <button class="btn" onclick="calcManual()">Punkte berechnen</button>
+        <div class="res-box hidden" id="mn-res">
+          <div style="font-size:11px;color:#9ca3af">Punktwert</div>
+          <div style="font-size:44px;font-weight:800;color:#db2777" id="mn-pts">0</div>
+          <div style="font-size:10px;color:#d1d5db;margin-bottom:8px">Punkte</div>
+          <button class="btn" onclick="addManual()">+ Zum Tagebuch</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE SPORT -->
+  <div id="page-sport" class="hidden">
+    <div class="card">
+      <div class="card-title">🏃 Aktivitäten – Punkte gutschreiben</div>
+      <div class="sgrid" id="sgrid"></div>
+    </div>
+    <div class="custom-sport-box">
+      <div style="font-size:12px;font-weight:700;color:#7c3aed;margin-bottom:8px">⚙️ Eigene Dauer eingeben</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px">
+        <div><span class="inp-label">Aktivität</span>
+          <select id="cs-sel">
+            <option value="0.21">Hula Hoop</option>
+            <option value="0.167">Gartenarbeit</option>
+            <option value="0.182">Tanzen</option>
+            <option value="0.133">Spaziergang</option>
+          </select></div>
+        <div><span class="inp-label">Minuten</span><input type="number" id="cs-min" placeholder="30" min="1" max="240"></div>
+      </div>
+      <button class="btn" onclick="addCustomSport()">Berechnen & hinzufügen</button>
+    </div>
+    <div class="card">
+      <div class="card-title">✅ Heute gemacht</div>
+      <div id="slog-empty" style="text-align:center;padding:16px 0;font-size:12px;color:#d1d5db">Noch nichts eingetragen.</div>
+      <div id="slog-items"></div>
+    </div>
+  </div>
+
+  <!-- PAGE GEWICHT -->
+  <div id="page-gewicht" class="hidden">
+    <div class="card">
+      <div class="card-title">⚖️ Gewicht eintragen</div>
+      <p style="font-size:11px;color:#9ca3af;margin-bottom:8px">Budget wird automatisch neu berechnet (sitzend, kein Hula Hoop, 400 kcal Defizit):</p>
+      <div style="display:flex;gap:7px;align-items:flex-end;margin-bottom:7px">
+        <div style="flex:1"><span class="inp-label">Gewicht (kg)</span><input type="number" id="w-inp" placeholder="77.0" step="0.1" min="30" max="300"></div>
+        <button class="btn-sm" onclick="saveWeight()">Speichern</button>
+      </div>
+      <div id="w-ok" class="info-ok hidden"></div>
+      <div id="w-chart-wrap" class="hidden" style="margin-top:10px">
+        <p style="font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">📈 Gewichtsverlauf</p>
+        <canvas id="w-chart" height="120"></canvas>
+      </div>
+      <div id="w-hist" style="margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📊 Budget nach Gewicht</div>
+      <div id="budget-table"></div>
+    </div>
+  </div>
+
+  <!-- PAGE MASSE -->
+  <div id="page-masse" class="hidden">
+    <div class="card">
+      <div class="card-title">📏 Körpermaße eintragen (cm)</div>
+      <p style="font-size:11px;color:#9ca3af;margin-bottom:8px">Auch einzelne Werte möglich – alles wird gespeichert:</p>
+      <div class="mgrid" id="meas-inputs"></div>
+      <div><span class="inp-label">Datum</span><input type="date" id="m-date" style="margin-bottom:8px"></div>
+      <button class="btn" onclick="saveMeasurements()">Maße speichern</button>
+      <div id="m-ok" class="info-ok hidden"></div>
+    </div>
+    <div class="card" id="m-chart-card" style="display:none">
+      <div class="card-title">📈 Umfang-Verlauf</div>
+      <div class="leg" id="m-legend"></div>
+      <canvas id="m-chart" height="150"></canvas>
+    </div>
+    <div class="card" id="m-hist-card" style="display:none">
+      <div class="card-title">Eingetragene Maße</div>
+      <div id="m-hist"></div>
+    </div>
+    <div id="m-empty" style="text-align:center;padding:24px 0;font-size:12px;color:#d1d5db">Noch keine Maße eingetragen.</div>
+  </div>
+
+  <!-- PAGE TAGEBUCH -->
+  <div id="page-tagebuch" class="hidden">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:13px;font-weight:700;color:#374151">📋 Heute gegessen</div>
+        <button onclick="resetLog()" style="font-size:11px;color:#d1d5db;background:none;border:none;cursor:pointer">Zurücksetzen</button>
+      </div>
+      <div id="log-empty" style="text-align:center;padding:24px 0;font-size:12px;color:#d1d5db">Noch nichts eingetragen.<br>Wähle aus der Lebensmittelliste!</div>
+      <div id="log-items"></div>
+      <div id="log-total" class="hidden">
+        <div class="ltotal"><span style="font-size:13px;font-weight:600;color:#6b7280">Gesamt heute</span><span style="font-size:17px;font-weight:800" id="log-total-val">0</span></div>
+        <div id="wex-row" class="hidden" style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:9px;background:#f5f3ff;border:1px solid #ede9fe;margin-top:5px">
+          <span style="font-size:11px;color:#7c3aed">Wochenextra genutzt</span>
+          <span style="font-size:12px;font-weight:600;color:#7c3aed" id="wex-val">0 Pkt.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg hidden" id="modal">
+  <div class="modal">
+    <div style="font-size:14px;font-weight:700;color:#374151;text-align:center;margin-bottom:3px" id="m-title"></div>
+    <div style="font-size:11px;color:#9ca3af;text-align:center;margin-bottom:12px" id="m-sub"></div>
+    <div class="stepper">
+      <button class="step-btn" onclick="adjG(-1)">−</button>
+      <div class="step-inp-w"><input class="step-inp" type="number" id="g-inp" value="100" min="1" oninput="updPrev()"><span class="step-unit" id="m-unit">g</span></div>
+      <button class="step-btn" onclick="adjG(1)">+</button>
+    </div>
+    <div class="qrow" id="qrow"></div>
+    <div class="prev-box"><div style="font-size:10px;color:#9ca3af">Punkte für diese Menge</div><div style="font-size:34px;font-weight:800" id="prev-v">0</div></div>
+    <div class="mbtns">
+      <button class="mcl" onclick="closeModal()">Abbrechen</button>
+      <button class="mok" onclick="confirmAdd()">+ Hinzufügen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// FOOD DATABASE
+// ═══════════════════════════════════════════════
+const FDB=[
+  // format: [name, kcal/100g, protein, sugar, satFat, fiber, defaultG, unit, fixed, category]
+  ["Belegtes Baguette (Pute,Gurke,Käse)",100,5.8,0.7,2.1,0.4,838,"Portion",1,"meine"],
+  ["Kartoffelsalat mit Mayo & Gurke",140,2.25,1.5,2.75,1.5,200,"g",0,"meine"],
+  ["Spaghetti Bolognese Maggi",96,4.8,1.2,1.4,0.7,500,"g",0,"meine"],
+  ["Gemischter Salat mit Essig & Öl",30,1,1.5,0.5,1.25,200,"g",0,"salat"],
+  ["Kartoffelsalat mit Essig & Öl",90,1.75,1,0.4,1.5,200,"g",0,"salat"],
+  ["Gurkensalat mit Essig & Öl",27,0.7,1.3,0.3,0.7,150,"g",0,"salat"],
+  ["Tomatensalat mit Essig & Öl",37,1,2.7,0.3,1,150,"g",0,"salat"],
+  ["Krautsalat mit Essig & Öl",47,1.3,2.7,0.3,2,150,"g",0,"salat"],
+  // WURST
+  ["Salami",430,20,0.5,14,0,30,"g",0,"wurst"],
+  ["Lyoner / Fleischwurst",220,12,1.5,10,0,50,"g",0,"wurst"],
+  ["Mortadella",310,14,0.5,13,0,30,"g",0,"wurst"],
+  ["Bierschinken",150,14,2,5,0,50,"g",0,"wurst"],
+  ["Schinken, gekocht",110,15,1,2.5,0,50,"g",0,"wurst"],
+  ["Schinken roh / Schwarzwälder",170,18,0.5,6,0,30,"g",0,"wurst"],
+  ["Cervelat",340,16,0.5,14,0,30,"g",0,"wurst"],
+  ["Wiener Würstchen (1 Stück)",260,12,1,12,0,70,"g",1,"wurst"],
+  ["Bratwurst, gegrillt",330,14,1,16,0,100,"g",0,"wurst"],
+  ["Leberwurst",280,12,1,14,0,30,"g",0,"wurst"],
+  ["Mettwurst",380,15,0.5,18,0,30,"g",0,"wurst"],
+  ["Geflügelwurst",130,16,2,4,0,50,"g",0,"wurst"],
+  // KÄSE
+  ["Gouda",370,25,0,18,0,30,"g",0,"kaese"],
+  ["Emmentaler",380,28,0.1,16,0,30,"g",0,"kaese"],
+  ["Edamer",310,24,0.1,13,0,30,"g",0,"kaese"],
+  ["Havarti",350,22,0.1,15,0,30,"g",0,"kaese"],
+  ["Camembert",275,17,0.1,11,0,30,"g",0,"kaese"],
+  ["Brie",300,16,0.1,13,0,30,"g",0,"kaese"],
+  ["Parmesan",400,36,0.1,15,0,20,"g",0,"kaese"],
+  ["Mozzarella light",190,23,0.3,5,0,30,"g",0,"kaese"],
+  ["Feta",250,14,0.5,13,0,30,"g",0,"kaese"],
+  ["Frischkäse light",173,9,5,8,0,30,"g",0,"kaese"],
+  ["Schmelzkäse",200,9,3,9,0,20,"g",0,"kaese"],
+  ["Hüttenkäse",98,11,3.5,1.5,0,100,"g",0,"kaese"],
+  ["Ricotta",174,11,3,7,0,100,"g",0,"kaese"],
+  ["Mascarpone",390,6,4,21,0,30,"g",0,"kaese"],
+  // KEKSE
+  ["Leibniz Butterkeks (2 Stück)",450,7.5,18,8,1.5,15,"g",1,"kekse"],
+  ["Oreo (3 Stück)",480,5,36,11,2,33,"g",1,"kekse"],
+  ["Digestive (2 Stück)",460,7,22,10,3,28,"g",1,"kekse"],
+  ["Spekulatius (2 Stück)",450,6,28,10,2,25,"g",1,"kekse"],
+  ["Zimtsterne (2 Stück)",430,8,30,9,2.5,20,"g",1,"kekse"],
+  ["Waffelröllchen (3 Stück)",500,6,26,16,1,18,"g",1,"kekse"],
+  ["Müslikeks (1 Stück)",400,6,20,8,3,30,"g",1,"kekse"],
+  ["Shortbread (2 Stück)",490,6,16,14,1,25,"g",1,"kekse"],
+  // PFANNKUCHEN
+  ["Pfannkuchen pur (1 Stück)",185,6,3,6,1,80,"g",1,"pfannkuchen"],
+  ["Pfannkuchen mit Marmelade",210,6,14,6,1,100,"g",1,"pfannkuchen"],
+  ["Pfannkuchen mit Nutella",250,7,18,9,1.5,110,"g",1,"pfannkuchen"],
+  ["Crêpe pur (1 Stück)",145,5,3,4,0.5,60,"g",1,"pfannkuchen"],
+  ["Crêpe mit Zitrone & Zucker",175,5,16,4,0.5,80,"g",1,"pfannkuchen"],
+  ["Crêpe Suzette (Orangensauce)",220,5,22,5,0.5,100,"g",1,"pfannkuchen"],
+  // ZUCKER & AUFSTRICHE
+  ["Zucker (1 TL)",400,0,99,0,0,5,"g",1,"zucker"],
+  ["Puderzucker (1 TL)",395,0,98,0,0,5,"g",1,"zucker"],
+  ["Honig (1 TL)",304,0.3,76,0,0,10,"g",1,"zucker"],
+  ["Ahornsirup (1 EL)",260,0,60,0,0,15,"g",1,"zucker"],
+  ["Agavendicksaft (1 EL)",290,0,68,0,0,15,"g",1,"zucker"],
+  ["Marmelade / Konfitüre (1 EL)",250,0.5,55,0.1,0.5,20,"g",1,"zucker"],
+  ["Nutella (1 EL)",530,6,56,11,0,15,"g",1,"zucker"],
+  ["Karamellsauce (1 EL)",340,2,58,8,0,20,"g",1,"zucker"],
+  // SÜSSIGKEITEN
+  ["Twix Mini (20g)",498,4.5,45,12,1,20,"g",1,"suesses"],
+  ["Twix Riegel (50g)",498,4.5,45,12,1,50,"g",1,"suesses"],
+  ["Snickers Mini (18g)",488,8,43,11,1.5,18,"g",1,"suesses"],
+  ["Snickers Riegel (52g)",488,8,43,11,1.5,52,"g",1,"suesses"],
+  ["Mars Mini (20g)",449,3.5,57,9.5,0.5,20,"g",1,"suesses"],
+  ["Mars Riegel (51g)",449,3.5,57,9.5,0.5,51,"g",1,"suesses"],
+  ["Duplo 1 Riegel (18g)",547,6.5,40,17,2,18,"g",1,"suesses"],
+  ["Duplo 2 Riegel (36g)",547,6.5,40,17,2,36,"g",1,"suesses"],
+  ["KitKat 2 Finger (21g)",508,6.5,46,16,1.5,21,"g",1,"suesses"],
+  ["KitKat 4 Finger (42g)",508,6.5,46,16,1.5,42,"g",1,"suesses"],
+  ["Mr.Choc Peanut Mini (16g)",530,9.5,40,14,2,16,"g",1,"suesses"],
+  ["Mr.Choc Peanut Riegel (50g)",530,9.5,40,14,2,50,"g",1,"suesses"],
+  ["Schokolade dunkel 70%",570,7.5,35,20,7.5,20,"g",0,"suesses"],
+  ["Schokolade Vollmilch",535,7.5,52.5,17.5,2.5,20,"g",0,"suesses"],
+  ["Gummibärchen",323,6.7,60,0,0,30,"g",0,"suesses"],
+  ["Salzstangen / Pretzels",380,10,1.7,1,3.3,30,"g",0,"suesses"],
+  ["Chips",523,6.7,1,8.3,3.3,30,"g",0,"suesses"],
+  // EIS
+  ["Eisdiele: Vanille (1 Kugel)",207,3.5,18,7,0,70,"g",1,"eis"],
+  ["Eisdiele: Schokolade (1 Kugel)",220,3.5,20,8,1,70,"g",1,"eis"],
+  ["Eisdiele: Erdbeere (1 Kugel)",160,2,20,4,0.5,70,"g",1,"eis"],
+  ["Eisdiele: Sorbet/Fruchteis (1 Kugel)",120,0.5,25,0.1,0.5,70,"g",1,"eis"],
+  ["Eisdiele: Pistazie (1 Kugel)",230,4,18,8,1,70,"g",1,"eis"],
+  ["Eisdiele: Zitrone Sorbet (1 Kugel)",110,0.3,24,0,0.3,70,"g",1,"eis"],
+  ["Magnum Classic (1 Stück)",280,3.5,22,13,1,86,"g",1,"eis"],
+  ["Magnum Almond (1 Stück)",310,4,22,16,1.5,90,"g",1,"eis"],
+  ["Cornetto Classic (1 Stück)",220,3,24,8,0.5,75,"g",1,"eis"],
+  ["Langnese Vanilla Stiel",170,2,17,7,0,73,"g",1,"eis"],
+  ["Häagen-Dazs Vanilla (100ml)",250,4,21,11,0,100,"ml",0,"eis"],
+  // FLEISCH
+  ["Hühnchenbrust, gekocht",110,23,0,0.3,0,100,"g",0,"fleisch"],
+  ["Putenbrust, gekocht",107,24,0,0.2,0,100,"g",0,"fleisch"],
+  ["Hähnchenkeule ohne Haut",148,20,0,2.5,0,100,"g",0,"fleisch"],
+  ["Schweinelende",143,21,0,2.0,0,100,"g",0,"fleisch"],
+  ["Schweinefilet",109,22,0,1.5,0,100,"g",0,"fleisch"],
+  ["Rinderfilet",131,22,0,2.0,0,100,"g",0,"fleisch"],
+  ["Rinderhack 20% Fett",230,17,0,7.5,0,100,"g",0,"fleisch"],
+  ["Frikadelle",220,15,1.5,5.5,0.5,80,"g",0,"fleisch"],
+  ["Pulled Pork",185,20,2,4.5,0,100,"g",0,"fleisch"],
+  ["Bratwurst, gegrillt",330,14,1,16,0,100,"g",0,"fleisch"],
+  // FISCH
+  ["Kabeljau / Seelachs",82,18,0,0.2,0,100,"g",0,"fisch"],
+  ["Lachs, gegart",180,20,0,3.5,0,100,"g",0,"fisch"],
+  ["Thunfisch in Wasser",100,23,0,0.5,0,100,"g",0,"fisch"],
+  ["Garnelen",85,18,0,0.2,0,100,"g",0,"fisch"],
+  // EIER
+  ["Ei gekocht (1 Stück)",156,12,0.4,3.2,0,60,"g",1,"eier"],
+  ["Spiegelei (1 Stück, in Butter)",140,9,0.3,5.5,0,55,"g",1,"eier"],
+  ["Rührei (2 Eier, mit Butter)",220,16,0.5,9,0,120,"g",1,"eier"],
+  ["Omelette pur (2 Eier)",190,16,0.4,8,0,110,"g",1,"eier"],
+  ["Omelette mit Käse (2 Eier)",270,20,0.5,13,0,130,"g",1,"eier"],
+  ["Pochiertes Ei (1 Stück)",78,7,0.3,3,0,55,"g",1,"eier"],
+  ["Wachtelei (3 Stück)",158,13,0.5,3.3,0,45,"g",1,"eier"],
+  ["Eiweiß (1 Stück)",17,3.6,0.2,0.1,0,33,"g",1,"eier"],
+  ["Eigelb (1 Stück)",55,2.7,0.1,4.5,0,17,"g",1,"eier"],
+  ["Hartgekochtes Ei in Senfsauce",180,12,3,7,0.5,150,"g",1,"eier"],
+  // LIDL BACKSHOP
+  ["Laugenbrezel (1 Stück)",300,8,2,2.5,2,85,"g",1,"lidl"],
+  ["Laugenstange (1 Stück)",280,8,1.5,2,1.5,75,"g",1,"lidl"],
+  ["Croissant (1 Stück)",406,7,5,13,1.5,65,"g",1,"lidl"],
+  ["Schokocroissant (1 Stück)",440,7,18,14,2,70,"g",1,"lidl"],
+  ["Mandelcroissant (1 Stück)",430,9,14,16,2.5,75,"g",1,"lidl"],
+  ["Laugencroissant (1 Stück)",380,8,3,12,1.5,70,"g",1,"lidl"],
+  ["Käsebrötchen (1 Stück)",310,11,2,8,1.5,80,"g",1,"lidl"],
+  ["Weizenbrötchen (1 Stück)",265,9,2,1.5,2,75,"g",1,"lidl"],
+  ["Mohnbrötchen (1 Stück)",275,9,2,2,2,75,"g",1,"lidl"],
+  ["Sesambrötchen (1 Stück)",270,9,2,2.5,2.5,75,"g",1,"lidl"],
+  ["Zimtschnecke (1 Stück)",390,6,22,10,1.5,90,"g",1,"lidl"],
+  ["Blätterteigschnecke Käse (1 Stück)",370,10,2.5,14,1,80,"g",1,"lidl"],
+  ["Brezeldip / Obatzda (30g)",280,10,1,14,0,30,"g",1,"lidl"],
+  // WHEY PROTEIN
+  ["NZ Whey Protein Vanille (30g)",400,77,5,4,1,30,"g",1,"whey"],
+  ["NZ Whey Protein Schoko (30g)",390,75,6,4,2,30,"g",1,"whey"],
+  ["NZ Whey Protein Neutral (30g)",395,80,3,3,0.5,30,"g",1,"whey"],
+  ["Whey Shake mit Wasser (300ml)",120,24,2,1.5,0.5,300,"ml",1,"whey"],
+  ["Whey Shake mit Milch 0% (300ml)",176,30,7,1.5,0.5,300,"ml",1,"whey"],
+  // EIER & MILCH
+  ["Magerquark 0%",67,12,3.5,0.1,0,100,"g",0,"milch"],
+  ["Naturjoghurt 0%",56,5,5.5,0.1,0,100,"g",0,"milch"],
+  ["Naturjoghurt 1,5%",63,5,5.5,1.0,0,100,"g",0,"milch"],
+  ["Naturjoghurt 3,5%",76,4,5,2.5,0,100,"g",0,"milch"],
+  ["Vollmilch",61,3.2,4.8,1.95,0,100,"ml",0,"milch"],
+  ["Saure Sahne",180,3.3,3.3,11.7,0,30,"g",0,"milch"],
+  // GETREIDE
+  ["Vollkornbrot",215,7.5,2.5,1.25,11,40,"g",0,"getreide"],
+  ["Weißbrot / Toast",250,8.3,5,1.3,3.3,30,"g",0,"getreide"],
+  ["Baguette",280,9,2.5,0.5,2,100,"g",0,"getreide"],
+  ["Brötchen",290,10,3,1.2,4,50,"g",0,"getreide"],
+  ["Haferflocken",370,12.5,2,2.75,10,40,"g",0,"getreide"],
+  ["Reis, gekocht",110,2.3,0,0.1,0.5,150,"g",0,"getreide"],
+  ["Pasta / Spaghetti, gekocht",117,4,0.7,0.3,1.3,150,"g",0,"getreide"],
+  ["Kartoffeln, gekocht",80,2,0.7,0.1,1.7,150,"g",0,"getreide"],
+  // GEMÜSE
+  ["Brokkoli",34,3,1.5,0.2,3,100,"g",0,"gemuese"],
+  ["Blumenkohl",25,2,1.5,0.1,2,100,"g",0,"gemuese"],
+  ["Zucchini",17,1.5,1.5,0.2,1,100,"g",0,"gemuese"],
+  ["Gurke",14,0.7,1.5,0.1,0.5,100,"g",0,"gemuese"],
+  ["Paprika",27,1,4,0.2,2,100,"g",0,"gemuese"],
+  ["Tomaten",18,1,2.5,0.2,1,100,"g",0,"gemuese"],
+  ["Spinat",23,3,0.5,0.3,2,100,"g",0,"gemuese"],
+  ["Karotten",35,1,4.5,0.2,3,100,"g",0,"gemuese"],
+  ["Champignons",22,3,0.5,0.1,1,100,"g",0,"gemuese"],
+  ["Spargel",20,2,1.5,0.1,2,100,"g",0,"gemuese"],
+  ["Grüne Bohnen",31,2,2,0.2,3,100,"g",0,"gemuese"],
+  // OBST
+  ["Apfel",52,0.3,7.3,0.1,1.7,150,"g",0,"obst"],
+  ["Erdbeeren",32,0.7,4.5,0.2,2,100,"g",0,"obst"],
+  ["Himbeeren",52,1,4.5,0.3,6.5,100,"g",0,"obst"],
+  ["Banane",89,1,12,0.1,2.5,100,"g",0,"obst"],
+  ["Orange",41,0.8,6.7,0.1,2,150,"g",0,"obst"],
+  ["Wassermelone",30,0.6,6,0.1,0.4,100,"g",0,"obst"],
+  ["Linsen, gekocht",116,9,0.5,0.4,8,100,"g",0,"obst"],
+  ["Kichererbsen, gekocht",164,9,0,2.6,8,100,"g",0,"obst"],
+  // GETRÄNKE
+  ["Coke Zero / Light",0.4,0,0,0,0,250,"ml",1,"trinken"],
+  ["Orangensaft",44,0.6,8.5,0.05,0.2,200,"ml",0,"trinken"],
+  ["Wein weiß (125ml)",66,0.1,0.8,0,0,125,"ml",1,"trinken"],
+  ["Wein rot (125ml)",68,0.1,0.4,0,0,125,"ml",1,"trinken"],
+  ["Bier (330ml)",42,0.3,0,0,0,330,"ml",1,"trinken"],
+  ["Latte Macchiato Vollmilch",60,2.5,4.5,1.25,0,200,"ml",0,"trinken"],
+  // SAUCEN
+  ["Ketchup (1 EL)",113,2,20,0,1.3,15,"g",1,"saucen"],
+  ["Mayonnaise light (1 EL)",333,1.3,3.3,6.7,0,15,"g",1,"saucen"],
+  ["Mayonnaise normal (1 EL)",667,1.3,2,12,0,15,"g",1,"saucen"],
+  ["Senf (1 TL)",100,8,2,2,6,5,"g",1,"saucen"],
+  ["Tomatensoße / Salsa",78,3.3,7.8,0.4,2.2,45,"g",0,"saucen"],
+  // FETTE & NÜSSE
+  ["Olivenöl (1 TL)",884,0,0,14,0,5,"g",1,"fette"],
+  ["Butter (1 TL)",740,0.7,0.6,48,0,5,"g",1,"fette"],
+  ["Avocado (halbe)",160,2,0.6,2.1,6.4,70,"g",0,"fette"],
+  ["Mandeln",587,21,5.3,4,13,15,"g",0,"fette"],
+  ["Walnüsse",660,15,2.7,6,6.7,15,"g",0,"fette"],
+  ["Erdnüsse geröstet",580,26,4,8,8,10,"g",0,"fette"],
+  ["Cashewnüsse (5 Stück)",570,18,6,9,3,5,"g",0,"fette"],
+  ["Haselnüsse (4 Stück)",630,15,4,11,9,5,"g",0,"fette"],
+  ["Pinienkerne (1 TL)",690,14,4,9,2,7,"g",0,"fette"],
+  ["Pistazien (7 Stück)",560,20,6,9,10,7,"g",0,"fette"],
+  ["Sonnenblumenkerne (1 TL)",580,21,2,9,7,10,"g",0,"fette"],
+  ["Kürbiskerne (1 TL)",560,30,2,11,6,10,"g",0,"fette"],
+  ["Kokosnuss frisch",355,3,5,30,9,50,"g",0,"fette"],
+  // 🥔 KARTOFFELN
+  ["Bratkartoffeln",220,4,1,6,3,200,"g",0,"kartoffel"],
+  ["Kartoffelklöße (1 Stück)",130,3,1,0.5,2,90,"g",1,"kartoffel"],
+  ["Pommes frites",380,5,1,8,3,150,"g",0,"kartoffel"],
+  ["Ofen-Pommes",230,4,1,4,3,150,"g",0,"kartoffel"],
+  ["Kartoffelpüree",130,3,2,3,2,150,"g",0,"kartoffel"],
+  ["Rösti (1 Stück)",150,2,1,5,2,60,"g",1,"kartoffel"],
+  ["Süßkartoffel",90,2,5,0.1,3,100,"g",0,"kartoffel"],
+  // 🍕 PIZZA & AUSWÄRTS
+  ["Pizza Margherita TK (300g)",220,9,4,6,2,300,"g",1,"auswarts"],
+  ["Pizza Salami TK (300g)",270,11,4,9,2,300,"g",1,"auswarts"],
+  ["Pizza Schinken TK (300g)",240,11,4,7,2,300,"g",1,"auswarts"],
+  ["Hamburger",300,16,7,10,2,150,"g",1,"auswarts"],
+  ["Döner Kebab",420,22,5,15,3,280,"g",1,"auswarts"],
+  ["Currywurst mit Sauce",450,16,12,22,2,250,"g",1,"auswarts"],
+  ["Bockwurst mit Brötchen",480,18,5,22,3,220,"g",1,"auswarts"],
+  ["Pommes mit Ketchup",380,5,6,8,3,200,"g",1,"auswarts"],
+  ["Blattsalat mit Putenstreifen",220,22,4,6,3,300,"g",1,"auswarts"],
+  // 🍮 DESSERTS
+  ["Crème Brûlée (125g)",280,4,18,12,0,125,"g",1,"dessert"],
+  ["Grießbrei",130,4,8,2,0.5,125,"g",0,"dessert"],
+  ["Milchreis",140,4,10,2,0.5,125,"g",0,"dessert"],
+  ["Tiramisu (150g)",330,6,22,14,0.5,150,"g",1,"dessert"],
+  ["Vanillepudding",150,4,16,3,0,125,"g",0,"dessert"],
+  ["Mousse au Chocolat",380,6,28,18,1,125,"g",0,"dessert"],
+  ["Dampfnudel (1 Stück)",230,6,10,4,1,50,"g",1,"dessert"],
+  ["Fruchtcreme",250,3,22,8,1,150,"g",0,"dessert"],
+  // 🎂 KUCHEN
+  ["Käsekuchen (1 Stück)",320,8,20,12,1,100,"g",1,"kuchen"],
+  ["Apfelkuchen Mürbeteig (1 Stück)",300,4,18,10,2,100,"g",1,"kuchen"],
+  ["Schwarzwälder Kirsch (1 Stück)",380,4,22,16,1,100,"g",1,"kuchen"],
+  ["Marmorkuchen (1 Stück)",280,4.5,20,8,1,60,"g",1,"kuchen"],
+  ["Donut (1 Stück)",350,4.5,18,14,1,80,"g",1,"kuchen"],
+  ["Berliner / Krapfen (1 Stück)",320,5,14,12,1,90,"g",1,"kuchen"],
+  ["Streuselkuchen (1 Stück)",300,5,16,10,1.5,80,"g",1,"kuchen"],
+  ["Waffel, frisch (1 Stück)",280,6,12,9,1.5,80,"g",1,"kuchen"],
+  // 🌿 VEGETARISCH
+  ["Tofu, natur",120,12,0.5,5,1,100,"g",0,"veggie"],
+  ["Quorn",130,14,0.5,3,6,100,"g",0,"veggie"],
+  ["Soja-Drink / Sojamilch",50,3.5,3,1.5,0.5,250,"ml",0,"veggie"],
+  ["Grünkernbratling (1 Stück)",200,8,4,6,5,100,"g",1,"veggie"],
+  // GETREIDE (neue)
+  ["Couscous, gekocht",175,6,0.5,0.5,2,150,"g",0,"getreide"],
+  ["Bulgur, gekocht",165,6,0.5,0.5,4,150,"g",0,"getreide"],
+  ["Hirse, gekocht",160,5,0.5,1,1.5,150,"g",0,"getreide"],
+  ["Polenta, gekocht",100,2.5,0.3,0.5,1,150,"g",0,"getreide"],
+  ["Gnocchi",210,4,2,1,1.5,125,"g",0,"getreide"],
+  ["Spätzle, gekocht",190,7,1,2,1,150,"g",0,"getreide"],
+  ["Knödel / Semmelknödel",200,6,5,3,2,100,"g",0,"getreide"],
+  ["Knäckebrot (1 Stück)",350,10,1,1,15,10,"g",1,"getreide"],
+  ["Pumpernickel (1 Scheibe)",190,6,3,0.5,7,50,"g",1,"getreide"],
+  ["Pita",260,8,1.5,0.5,2.5,65,"g",1,"getreide"],
+  ["Zwieback (1 Stück)",400,9,12,2,1,10,"g",1,"getreide"],
+  ["Fladenbrot (1 Ecke)",255,8,1,0.5,2,60,"g",1,"getreide"],
+  // MILCH (neue)
+  ["Buttermilch",100,8,10,0.5,0,250,"ml",0,"milch"],
+  ["Kefir",130,8,10,3,0,250,"ml",0,"milch"],
+  ["Crème fraîche (1 EL)",115,1.5,0.8,9,0,30,"g",0,"milch"],
+  ["Schlagsahne (1 EL)",100,0.7,0.9,9,0,30,"ml",0,"milch"],
+  ["Kondensmilch (2 TL)",27,1.5,3,0.8,0,20,"ml",0,"milch"],
+  // FISCH (neue)
+  ["Forelle, frisch",130,20,0,3,0,150,"g",0,"fisch"],
+  ["Hering in Gelee",150,14,2,6,0,150,"g",0,"fisch"],
+  ["Heringsfilet in Sahne",180,10,2,9,0,60,"g",0,"fisch"],
+  ["Matjeshering",220,15,0,12,0,80,"g",0,"fisch"],
+  ["Bismarckhering mariniert",200,16,3,8,0,110,"g",0,"fisch"],
+  ["Rollmops",170,13,2,7,0,80,"g",0,"fisch"],
+  ["Räucherlachs (2 Scheiben)",120,14,0,4,0,60,"g",0,"fisch"],
+  ["Sardinen in Öl (1 EL)",100,7,0,6,0,30,"g",0,"fisch"],
+  ["Krabben / Nordseekrabben",25,5,0,0.3,0,25,"g",0,"fisch"],
+  // FLEISCH (neue)
+  ["Kasseler (1 Scheibe)",180,18,0,6,0,40,"g",1,"fleisch"],
+  ["Lammkotelett",200,18,0,9,0,80,"g",0,"fleisch"],
+  ["Lammfilet",165,21,0,6,0,125,"g",0,"fleisch"],
+  ["Rindersteak",220,28,0,7,0,140,"g",0,"fleisch"],
+  ["Schweinebraten",200,22,0,8,0,100,"g",0,"fleisch"],
+  ["Schweinekotelett",200,22,0,8,0,150,"g",0,"fleisch"],
+  ["Schweineschnitzel",165,22,0,5,0,150,"g",0,"fleisch"],
+  ["Weißwurst (1 Stück)",270,12,1,14,0,60,"g",1,"fleisch"],
+  ["Knackwurst (1 Stück)",310,14,1,16,0,100,"g",1,"fleisch"],
+  ["Lachsschinken (2 Scheiben)",70,12,0.5,1.5,0,20,"g",1,"fleisch"],
+  ["Rostbratwurst",350,14,1,18,0,100,"g",0,"fleisch"],
+  ["Bauchspeck (1 Scheibe)",450,12,0,25,0,10,"g",1,"fleisch"],
+  ["Brathähnchen mit Haut (½)",280,30,0,12,0,280,"g",1,"fleisch"],
+  ["Brathähnchen ohne Haut (½)",200,32,0,6,0,280,"g",1,"fleisch"],
+  ["Hähnchen paniert",280,24,5,10,2,150,"g",0,"fleisch"],
+  ["Entenbrust ohne Haut",175,28,0,5,0,150,"g",0,"fleisch"],
+  // GETRÄNKE (neue)
+  ["Cappuccino mit Sahne",120,4,8,5,0,150,"ml",0,"trinken"],
+  ["Milchkaffee / Café au lait",130,6,10,3.5,0,300,"ml",0,"trinken"],
+  ["Apfelsaftschorle",55,0.2,11,0,0,200,"ml",0,"trinken"],
+  ["Sekt / Champagner (100ml)",80,0.3,3,0,0,100,"ml",1,"trinken"],
+  ["Gin Tonic",160,0,10,0,0,200,"ml",1,"trinken"],
+  ["Glühwein",200,0.5,25,0,0,200,"ml",1,"trinken"],
+  ["Caipirinha",230,0,22,0,0,200,"ml",1,"trinken"],
+  ["Eistee",80,0,18,0,0,200,"ml",0,"trinken"],
+  ["Apfelwein / Cidre",100,0.3,8,0,0,200,"ml",0,"trinken"],
+  ["Whisky (1 Schnapsglas)",55,0,0,0,0,20,"ml",1,"trinken"],
+  ["Rum (1 Schnapsglas)",55,0,0,0,0,20,"ml",1,"trinken"],
+  // SAUCEN (neue)
+  ["Pesto (1 TL)",500,5,2,12,2,5,"g",1,"saucen"],
+  ["Bratensauce (1 EL)",30,1,1.5,0.5,0.3,20,"ml",1,"saucen"],
+  ["Sahnesauce (1 EL)",120,1.5,1,8,0,20,"ml",1,"saucen"],
+  ["Sauce Hollandaise (1 EL)",280,2,1,18,0,20,"ml",1,"saucen"],
+  ["Cocktail-Dressing (1 EL)",250,1,8,14,0,15,"ml",1,"saucen"],
+  ["Joghurt-Dressing (1 EL)",80,1.5,3,3,0,15,"ml",1,"saucen"],
+  ["Italian Dressing (1 EL)",130,0.5,3,8,0,15,"ml",1,"saucen"],
+  ["Jägersauce (1 EL)",60,1.5,2,2,0.5,20,"ml",1,"saucen"],
+  ["Béchamelsauce (1 EL)",80,1.5,1.5,4,0.3,20,"ml",1,"saucen"],
+  ["Hackfleischsauce (1 EL)",120,6,2,5,0.5,30,"ml",1,"saucen"],
+  // SALATE (neue aus WW)
+  ["Fleischsalat mit Mayo (1 EL)",180,5,2,12,0.5,30,"g",1,"salat"],
+  ["Geflügelsalat mit Mayo (1 EL)",150,8,1,9,0,30,"g",1,"salat"],
+  ["Heringssalat (1 EL)",100,6,2,5,0.3,30,"g",1,"salat"],
+  ["Wurstsalat (1 EL)",120,6,0.5,8,0,30,"g",1,"salat"],
+  ["Nudelsalat (1 EL)",110,3,1,4,0.5,30,"g",1,"salat"],
+  ["Waldorfsalat mit Mayo (1 EL)",130,2,2,9,1,30,"g",1,"salat"],
+  // 🍞 BROT & BRÖTCHEN (WW)
+  ["Baguettebrot (25g)",280,9,2,0.5,2,25,"g",1,"brot_ww"],
+  ["Baguettebrötchen (90g)",280,9,2,0.5,2,90,"g",1,"brot_ww"],
+  ["Brot jede Sorte (1 Scheibe 50g)",215,7,2,0.8,4,50,"g",1,"brot_ww"],
+  ["Brötchen jede Sorte (45g)",270,9,2,1.2,3,45,"g",1,"brot_ww"],
+  ["Croissant (70g)",406,7,5,13,1.5,70,"g",1,"brot_ww"],
+  ["Croissant mit Schokolade (70g)",440,7,18,14,2,70,"g",1,"brot_ww"],
+  ["Fladenbrot (1 Ecke 60g)",255,8,1,0.5,2,60,"g",1,"brot_ww"],
+  ["Franzbrötchen mit Sonnenblumenkernen",340,8,8,8,3,80,"g",1,"brot_ww"],
+  ["Knäckebrot (1 Stück 10g)",350,10,1,1,15,10,"g",1,"brot_ww"],
+  ["Laugenbrezel (70g)",300,8,2,2.5,2,70,"g",1,"brot_ww"],
+  ["Mischbrot / Graubrot (1 Scheibe 50g)",210,7,2,0.8,4,50,"g",1,"brot_ww"],
+  ["Pita (65g)",260,8,1.5,0.5,2.5,65,"g",1,"brot_ww"],
+  ["Pumpernickel (1 Scheibe 50g)",190,6,3,0.5,7,50,"g",1,"brot_ww"],
+  ["Rosinenbrot (1 Scheibe 40g)",280,7,14,1,2,40,"g",1,"brot_ww"],
+  ["Rosinenbrötchen (50g)",280,7,14,1,2,50,"g",1,"brot_ww"],
+  ["Schwarzbrot (1 Scheibe 50g)",195,7,3,0.5,6,50,"g",1,"brot_ww"],
+  ["Taco-Schalen (10g)",450,6,2,5,3,10,"g",1,"brot_ww"],
+  ["Toastbrot (1 Scheibe 20g)",250,8,3,1.3,2,20,"g",1,"brot_ww"],
+  ["Vollkornbrötchen (55g)",220,8,2,1.5,8,55,"g",1,"brot_ww"],
+  ["Zopf (1 Scheibe 50g)",310,8,6,5,2,50,"g",1,"brot_ww"],
+  ["Zwieback (1 Stück 10g)",400,9,12,2,1,10,"g",1,"brot_ww"],
+  // 🧈 BROTAUFSTRICHE (WW)
+  ["Erdnusscreme (1 TL)",600,25,5,8,6,5,"g",1,"aufstrich"],
+  ["Fruchtaufstrich (3 TL 15g)",250,0.5,55,0.1,0.5,15,"g",1,"aufstrich"],
+  ["Honig (1 TL 5g)",304,0.3,76,0,0,5,"g",1,"aufstrich"],
+  ["Honig (2 TL 10g)",304,0.3,76,0,0,10,"g",1,"aufstrich"],
+  ["Marmelade / Konfitüre (1 TL)",250,0.5,55,0.1,0.5,5,"g",1,"aufstrich"],
+  ["Marmelade / Konfitüre (2 TL)",250,0.5,55,0.1,0.5,10,"g",1,"aufstrich"],
+  ["Marmelade kalorienreduziert (2 TL)",120,0.3,25,0,0.5,10,"g",1,"aufstrich"],
+  ["Nussmus (1 TL)",620,20,5,8,6,5,"g",1,"aufstrich"],
+  ["Nuss-Nougatcreme (1 TL)",530,6,56,11,0,5,"g",1,"aufstrich"],
+  ["Pflaumenmus (1 TL)",220,0.5,48,0,2,5,"g",1,"aufstrich"],
+  ["Vegetarischer Schmalzaufstrich (1 TL)",350,5,1,18,0.5,5,"g",1,"aufstrich"],
+  ["Zuckerrübenkraut (2 TL)",240,0.5,55,0,0,10,"g",1,"aufstrich"],
+  // 🍮 DESSERTS & SÜSSSPEISEN (WW)
+  ["Apfelkompott mit Zucker (2 EL 30g)",80,0.3,16,0,1,30,"g",1,"dessert_ww"],
+  ["Crêpe Suzette (1 Stück 70g)",220,6,5,6,1,70,"g",1,"dessert_ww"],
+  ["Dampfnudel (1 kleine 50g)",230,6,10,4,1,50,"g",1,"dessert_ww"],
+  ["Fruchtcreme (150g)",250,3,22,8,1,150,"g",1,"dessert_ww"],
+  ["Fruchtsalat mit Zucker (2 EL 40g)",60,0.5,12,0,1,40,"g",1,"dessert_ww"],
+  ["Götterspeise mit Süßstoff (125g)",5,1.5,0,0,0,125,"g",1,"dessert_ww"],
+  ["Götterspeise mit Zucker (125g)",60,1.5,12,0,0,125,"g",1,"dessert_ww"],
+  ["Grießbrei (125g)",130,4,8,2,0.5,125,"g",1,"dessert_ww"],
+  ["Milchreis (125g)",140,4,10,2,0.5,125,"g",1,"dessert_ww"],
+  ["Mousse au Chocolat (125g)",380,6,28,18,1,125,"g",1,"dessert_ww"],
+  ["Rote Grütze mit Zucker (1 EL 20g)",80,0.3,18,0,1,20,"g",1,"dessert_ww"],
+  ["Schokoladenpudding (125g)",150,4,16,3,1,125,"g",1,"dessert_ww"],
+  ["Schokoladensauce (1 EL 20ml)",280,2,30,8,2,20,"ml",1,"dessert_ww"],
+  ["Tiramisu (150g)",330,6,22,14,0.5,150,"g",1,"dessert_ww"],
+  ["Vanillepudding (125g)",150,4,16,3,0,125,"g",1,"dessert_ww"],
+  ["Vanillesauce (1 EL 20ml)",120,2,14,2,0,20,"ml",1,"dessert_ww"],
+  ["Weincreme (125g)",280,3,24,10,0,125,"g",1,"dessert_ww"],
+  // 🍦 EIS (WW)
+  ["Eiscreme (1 Kugel 50g)",200,3.5,18,7,0,50,"g",1,"eis"],
+  ["Eiscreme am Stiel mit Schokolade (90g)",320,3,24,12,1,90,"g",1,"eis"],
+  ["Eiskaffee Glas (120ml)",180,3,18,6,0,120,"ml",1,"eis"],
+  ["Eisjoghurt (1 Kugel 50g)",110,3.5,14,1.5,0,50,"g",1,"eis"],
+  ["Frucht- / Milcheis (1 Kugel 50g)",120,2,18,2.5,0.5,50,"g",1,"eis"],
+  ["Softeis mit Waffel (100g)",180,4,19,5,0.5,100,"g",1,"eis"],
+  ["Sorbet (1 Glas 200ml)",130,0.5,28,0.1,0.5,200,"ml",1,"eis"],
+  ["Wassereis am Stiel (110ml)",60,0,14,0,0,110,"ml",1,"eis"],
+  // 🍬 SÜSSIGKEITEN (WW)
+  ["Bananenspieß mit Schokolade",250,3,30,8,2,80,"g",1,"suesswaren"],
+  ["Bonbons mit Zucker (1 Stück)",380,0,90,0,0,5,"g",1,"suesswaren"],
+  ["Dominostein (1 Stück)",380,3.5,60,5,2,20,"g",1,"suesswaren"],
+  ["Frucht- / Weingummi (1 Stück)",320,5,65,0,0,10,"g",1,"suesswaren"],
+  ["Geleefrucht (1 Stück)",310,1,70,0,0,10,"g",1,"suesswaren"],
+  ["Getreideriegel mit Schokolade (30g)",420,6,28,8,3,30,"g",1,"suesswaren"],
+  ["Karamellbonbon (1 Stück)",390,2,55,8,0,5,"g",1,"suesswaren"],
+  ["Lakritz (1 Portion 25g)",310,4,45,1,1,25,"g",1,"suesswaren"],
+  ["Marshmallow (1 Stück)",320,1.5,70,0.1,0,15,"g",1,"suesswaren"],
+  ["Marzipan (1 kleines Stück 25g)",430,9,38,12,3,25,"g",1,"suesswaren"],
+  ["Nougat (1 Stück 25g)",530,7,47,18,2,25,"g",1,"suesswaren"],
+  ["Osterei Krokant (15g)",550,7,40,18,2,15,"g",1,"suesswaren"],
+  ["Osterei mit Cremefüllung (20g)",500,5,50,16,1,20,"g",1,"suesswaren"],
+  ["Praline (1 Stück 12g)",520,5,45,18,2,12,"g",1,"suesswaren"],
+  ["Reiswaffeln mit Schokolade (25g)",440,5,40,10,1.5,25,"g",1,"suesswaren"],
+  ["Rumkugeln (1 Stück 20g)",420,4,45,12,2,20,"g",1,"suesswaren"],
+  ["Schaumküsse / Schokokuss (1 Stück)",320,3,55,5,1,35,"g",1,"suesswaren"],
+  ["Schokolade (1 Stück 7g)",535,7,52,17,2,7,"g",1,"suesswaren"],
+  ["Schokolinsen (10 Stück)",520,5,55,14,1,10,"g",1,"suesswaren"],
+  ["Traubenzuckerbonbons (3 Stück)",385,0.5,90,0,0,7,"g",1,"suesswaren"],
+  // 🥚 VEGETARISCHE PRODUKTE & EI (WW)
+  ["Bratlingsmischung trocken (2 EL 12g)",320,15,3,5,8,12,"g",1,"vegprod"],
+  ["Grünkernbratling (1 Stück 100g)",200,8,4,6,5,100,"g",1,"vegprod"],
+  ["Quorn (100g)",130,14,0.5,3,6,100,"g",0,"vegprod"],
+  ["Rührei mit Fett (1 EL 20g)",220,14,0.4,9,0,20,"g",1,"vegprod"],
+  ["Seitan mit Kräutersauce (50g)",130,19,2,3,1,50,"g",1,"vegprod"],
+  ["Soja-Dessert (150g)",130,5,14,4,0.5,150,"g",1,"vegprod"],
+  ["Soja-Drink mit Zucker (250ml)",50,3,5,1.5,0.5,250,"ml",0,"vegprod"],
+  ["Soja-Drink ohne Zucker (250ml)",35,3.5,0.5,1.5,0.5,250,"ml",0,"vegprod"],
+  ["Soja-Joghurt mit Frucht (125g)",90,3.5,12,1.5,0.5,125,"g",0,"vegprod"],
+  ["Sojamilch (250ml)",50,3.5,3,1.5,0.5,250,"ml",0,"vegprod"],
+  ["Sojawürstchen (1 Stück 45g)",170,15,2,7,3,45,"g",1,"vegprod"],
+  ["Tofu / Sojakäse natur (100g)",120,12,0.5,5,1,100,"g",0,"vegprod"],
+  ["Vegetarische Tofubratlinge (1 Stück 100g)",200,12,4,7,4,100,"g",1,"vegprod"],
+  // 🧂 WÜRZMITTEL & ZUTATEN (WW)
+  ["Bouillon / Brühe Instant (1 TL 5g)",200,15,2,5,0,5,"g",1,"wuerz"],
+  ["Kakaogetränkepulver mit Zucker (1 TL 3g)",380,5,72,5,5,3,"g",1,"wuerz"],
+  ["Kakaopulver entölt ohne Zucker (1 TL 3g)",220,20,5,5,30,3,"g",1,"wuerz"],
+  ["Kapern (15g)",16,2,0,0.5,3,15,"g",1,"wuerz"],
+  ["Kokosnuss geraspelt (1 TL 5g)",630,6,6,55,15,5,"g",1,"wuerz"],
+  ["Kokosnussmilch frisch (200ml)",200,2,4,18,2,200,"ml",1,"wuerz"],
+  ["Meerrettich (15g)",80,3,3,0.5,5,15,"g",1,"wuerz"],
+  ["Paniermehl (1 TL 5g)",360,12,4,2,3,5,"g",1,"wuerz"],
+  ["Puddingpulver (1 TL 5g)",360,0.5,85,0.5,0.5,5,"g",1,"wuerz"],
+  ["Sambal Oelek (15g)",35,2,4,0.5,2,15,"g",1,"wuerz"],
+  ["Sojasauce (1 EL 15ml)",50,8,3,0,0,15,"ml",1,"wuerz"],
+  ["Stärkemehl / Speisestärke (1 TL 3g)",355,0.5,1,0,0,3,"g",1,"wuerz"],
+  ["Tabasco (5ml)",35,1,2,0.5,1,5,"ml",1,"wuerz"],
+  ["Tomatenmark (1 EL 15g)",80,4,8,0.5,3,15,"g",1,"wuerz"],
+  ["Worcestersauce (1 TL 5ml)",80,3,15,0,0.5,5,"ml",1,"wuerz"],
+  ["Zucker (1 TL 3g)",400,0,99,0,0,3,"g",1,"wuerz"],
+  ["Zucker (1 EL 15g)",400,0,99,0,0,15,"g",1,"wuerz"],
+  // 🫙 SAUCEN DRESSINGS & FIXPRODUKTE (WW)
+  ["Béchamelsauce (1 EL 20ml)",80,1.5,1.5,4,0.3,20,"ml",1,"saucen_ww"],
+  ["Bratensauce (1 EL 20ml)",30,1,1.5,0.5,0.3,20,"ml",1,"saucen_ww"],
+  ["Chilisauce (1 EL 20ml)",100,1,18,0.5,1,20,"ml",1,"saucen_ww"],
+  ["Chutney (1 EL 20ml)",150,0.5,32,0.3,1,20,"ml",1,"saucen_ww"],
+  ["Cocktail-Dressing (1 EL 15ml)",250,1,8,14,0,15,"ml",1,"saucen_ww"],
+  ["Fix für Salatsauce (½ Päckchen 5g)",200,5,20,5,2,5,"g",1,"saucen_ww"],
+  ["Fonduesaucen (1 EL 20ml)",250,2,5,15,0,20,"ml",1,"saucen_ww"],
+  ["Frankfurter Sauce (1 EL 20ml)",180,2,2,12,0.5,20,"ml",1,"saucen_ww"],
+  ["French Dressing (1 EL 15ml)",180,0.5,5,11,0,15,"ml",1,"saucen_ww"],
+  ["Grillsauce (1 EL 20ml)",100,1,18,0.5,1,20,"ml",1,"saucen_ww"],
+  ["Hackfleischsauce (1 EL 30ml)",120,6,2,5,0.5,30,"ml",1,"saucen_ww"],
+  ["Instantsaucen trocken (1 EL 10g)",320,5,15,8,2,10,"g",1,"saucen_ww"],
+  ["Italian Dressing (1 EL 15ml)",130,0.5,3,8,0,15,"ml",1,"saucen_ww"],
+  ["Jägersauce (1 EL 20ml)",60,1.5,2,2,0.5,20,"ml",1,"saucen_ww"],
+  ["Joghurt-Dressing (1 EL 15ml)",80,1.5,3,3,0,15,"ml",1,"saucen_ww"],
+  ["Käsesauce (1 EL 20ml)",150,5,2,8,0,20,"ml",1,"saucen_ww"],
+  ["Letscho (2 EL 40ml)",50,1.5,7,0.5,2,40,"ml",1,"saucen_ww"],
+  ["Relish (1 EL 20ml)",80,0.5,16,0.2,1,20,"ml",1,"saucen_ww"],
+  ["Sahnesauce (1 EL 20ml)",120,1.5,1,8,0,20,"ml",1,"saucen_ww"],
+  ["Salatdressing mit Öl (1 EL 15ml)",200,0.3,2,14,0,15,"ml",1,"saucen_ww"],
+  ["Salatdressing ohne Öl (1 EL 15ml)",50,0.5,8,0.5,0.3,15,"ml",1,"saucen_ww"],
+  ["Salsa Sauce (3 EL 60ml)",40,1.5,6,0.3,1.5,60,"ml",1,"saucen_ww"],
+  ["Sauce Hollandaise (1 EL 20ml)",280,2,1,18,0,20,"ml",1,"saucen_ww"],
+  ["Saucenbinder (1 TL 5g)",330,5,2,1,5,5,"g",1,"saucen_ww"],
+  ["Senfsauce (1 EL 20ml)",100,2,5,4,0.5,20,"ml",1,"saucen_ww"],
+  ["Tomatensauce (2 EL 40ml)",50,2,6,0.5,1.5,40,"ml",1,"saucen_ww"],
+  ["Vinaigrette Essig & Öl (1 EL 15ml)",280,0.3,1,20,0,15,"ml",1,"saucen_ww"],
+  // 🌰 NÜSSE & SAMEN (WW)
+  ["Cashewnüsse (5 Stück 5g)",570,18,6,9,3,5,"g",1,"nuesse"],
+  ["Erdnüsse geröstet (1 TL 10g)",580,26,4,8,8,10,"g",1,"nuesse"],
+  ["Erdnussflips (1 Hand voll 6g)",500,10,2,15,3,6,"g",1,"nuesse"],
+  ["Haselnüsse (4 Stück 5g)",630,15,4,11,9,5,"g",1,"nuesse"],
+  ["Kokosnuss frisch (50g)",355,3,5,30,9,50,"g",0,"nuesse"],
+  ["Kürbiskerne (1 TL 10g)",560,30,2,11,6,10,"g",0,"nuesse"],
+  ["Leinsamen (1 TL 5g)",530,18,1,8,27,5,"g",1,"nuesse"],
+  ["Macadamianüsse (1 Stück 3g)",720,8,4,48,9,3,"g",1,"nuesse"],
+  ["Mandeln (4 Stück 5g)",587,21,5.3,4,13,5,"g",1,"nuesse"],
+  ["Mohn (1 TL 5g)",450,20,3,12,20,5,"g",1,"nuesse"],
+  ["Nüsse gemahlen (1 TL 5g)",650,16,5,12,8,5,"g",1,"nuesse"],
+  ["Paranüsse (1 Stück 5g)",680,15,2,16,8,5,"g",1,"nuesse"],
+  ["Pekannüsse (4 Stück 5g)",700,9,4,18,10,5,"g",1,"nuesse"],
+  ["Pinienkerne (1 EL 7g)",690,14,4,9,2,7,"g",1,"nuesse"],
+  ["Pistazien (7 Stück 7g)",560,20,6,9,10,7,"g",1,"nuesse"],
+  ["Sesam (1 TL 5g)",580,18,0.5,8,12,5,"g",1,"nuesse"],
+  ["Sonnenblumenkerne (1 EL 10g)",580,21,2,9,7,10,"g",0,"nuesse"],
+  ["Walnüsse (1 Stück 5g)",660,15,2.7,6,6.7,5,"g",1,"nuesse"],
+  // 🍝 NUDELN & CO. (WW)
+  ["Cannelloni trocken (1 Stück 10g)",355,12,3,1.5,3,10,"g",1,"nudeln"],
+  ["Glasnudeln verzehrfertig (1 Tasse 120g)",115,0.5,0.5,0.2,0.5,120,"g",1,"nudeln"],
+  ["Gnocchi Fertigprodukt (125g)",170,3.5,2,0.8,1.5,125,"g",1,"nudeln"],
+  ["Lasagneplatten trocken (1 Stück 20g)",355,12,3,1.5,3,20,"g",1,"nudeln"],
+  ["Maultaschen verzehrfertig (1 Stück 50g)",200,9,3,5,1,50,"g",1,"nudeln"],
+  ["Nudeln trocken (1 Portion 40g)",355,12,3,1.5,3,40,"g",1,"nudeln"],
+  ["Nudeln verzehrfertig (1 Tasse 120g)",140,5,1,0.7,1.5,120,"g",1,"nudeln"],
+  ["Ravioli verzehrfertig (1 Tasse 120g)",140,6,2,2,1,120,"g",1,"nudeln"],
+  ["Schupfnudeln trocken (1 Portion 40g)",280,7,2,1,2,40,"g",1,"nudeln"],
+  ["Schupfnudeln verzehrfertig (1 EL 30g)",200,4,1.5,3,1.5,30,"g",1,"nudeln"],
+  ["Spätzle trocken (1 Portion 40g)",330,13,2,3,2,40,"g",1,"nudeln"],
+  ["Spätzle verzehrfertig (1 EL 30g)",170,6,1,2,1,30,"g",1,"nudeln"],
+  ["Tortellini trocken (1 Portion 40g)",340,14,3,5,2,40,"g",1,"nudeln"],
+  ["Tortellini verzehrfertig (1 Tasse 120g)",180,9,2.5,3.5,1.5,120,"g",1,"nudeln"],
+  // 🥛 MILCH & MILCHPRODUKTE (WW)
+  ["Buttermilch natur (250ml)",100,8,10,0.5,0,250,"ml",0,"milch_ww"],
+  ["Crème fraîche 30% (1 TL 5g)",310,2,3,20,0,5,"g",1,"milch_ww"],
+  ["Dickmilch 3,5% (250ml)",155,8,10,5,0,250,"ml",0,"milch_ww"],
+  ["Fruchtjoghurt bis 0,4% Fett (150g)",65,4,11,0.2,0.3,150,"g",0,"milch_ww"],
+  ["Joghurt natur bis 0,3% Fett (150g)",50,5,5.5,0.1,0,150,"g",0,"milch_ww"],
+  ["Joghurt natur bis 1,8% Fett (150g)",70,5,5.5,1.5,0,150,"g",0,"milch_ww"],
+  ["Joghurt natur bis 3,5% Fett (150g)",85,5,5,3,0,150,"g",0,"milch_ww"],
+  ["Kaffeesahne 10% (3 TL 15ml)",130,3,4,9,0,15,"ml",1,"milch_ww"],
+  ["Kefir (250ml)",130,8,10,3,0,250,"ml",0,"milch_ww"],
+  ["Kondensmilch 4-7% (4 TL 20ml)",105,7,11,3,0,20,"ml",1,"milch_ww"],
+  ["Magermilch 0,3% (250ml)",90,9,12,0.2,0,250,"ml",0,"milch_ww"],
+  ["Milch 1,5% fettarm (250ml)",110,8.5,12,2,0,250,"ml",0,"milch_ww"],
+  ["Milch 3,5% Vollmilch (250ml)",155,8,12,5,0,250,"ml",0,"milch_ww"],
+  ["Molke (250ml)",65,5,5,0.5,0,250,"ml",1,"milch_ww"],
+  ["Sahne bis 30% (2 EL 30ml)",200,2,3,18,0,30,"ml",1,"milch_ww"],
+  ["Sahnejoghurt (150g)",175,5,9,8,0,150,"g",0,"milch_ww"],
+  ["Saure Sahne bis 10% (1 TL 5g)",110,3,3,7,0,5,"g",1,"milch_ww"],
+  ["Saure Sahne bis 10% (1 EL 15g)",110,3,3,7,0,15,"g",1,"milch_ww"],
+  ["Schlagsahne (1 EL 15ml)",280,2,3,22,0,15,"ml",1,"milch_ww"],
+  ["Sauermilchkäse z.B. Harzer (100g)",110,28,0,0.5,0,100,"g",0,"milch_ww"],
+  ["Speisequark bis 0,2% Fett (75g)",72,12,3.5,0.1,0,75,"g",0,"milch_ww"],
+  ["Speisequark 20% Fett (25g)",110,10,3,5,0,25,"g",0,"milch_ww"],
+  ["Speisequark 40% Fett (25g)",155,9,3,9,0,25,"g",0,"milch_ww"],
+  ["Sprühsahne kalorienreduziert (1 EL 8g)",100,3,4,6,0,8,"g",1,"milch_ww"],
+  // 🧀 KÄSE (WW)
+  ["Appenzeller 20% Fett i.Tr.",200,25,0.5,8,0,30,"g",0,"kaese_ww"],
+  ["Appenzeller 50% Fett i.Tr.",350,24,0.5,18,0,30,"g",0,"kaese_ww"],
+  ["Butterkäse 50% Fett i.Tr.",350,22,0.1,17,0,30,"g",0,"kaese_ww"],
+  ["Camembert 30% Fett i.Tr.",180,18,0.1,7,0,30,"g",0,"kaese_ww"],
+  ["Camembert 45% Fett i.Tr.",240,17,0.1,11,0,30,"g",0,"kaese_ww"],
+  ["Camembert 60% Fett i.Tr.",300,16,0.1,17,0,30,"g",0,"kaese_ww"],
+  ["Cheddar / Chester 50% Fett i.Tr.",350,24,0.1,18,0,30,"g",0,"kaese_ww"],
+  ["Cottage Cheese (100g)",110,11,3.5,1.5,0,100,"g",0,"kaese_ww"],
+  ["Edamer 30% Fett i.Tr.",210,24,0.1,8,0,30,"g",0,"kaese_ww"],
+  ["Edamer 45-48% Fett i.Tr.",270,24,0.1,13,0,30,"g",0,"kaese_ww"],
+  ["Edelpilzkäse 45% Fett i.Tr.",290,19,0.1,15,0,30,"g",0,"kaese_ww"],
+  ["Emmentaler 45% Fett i.Tr.",310,28,0.1,16,0,30,"g",0,"kaese_ww"],
+  ["Frischkäse 30% Fett i.Tr. (1 EL 15g)",140,9,3,7,0,15,"g",1,"kaese_ww"],
+  ["Frischkäse 50% Fett i.Tr. (1 EL 15g)",200,8,3,12,0,15,"g",1,"kaese_ww"],
+  ["Frischkäse 60% Fett i.Tr. (1 EL 15g)",240,7,3,15,0,15,"g",1,"kaese_ww"],
+  ["Gorgonzola",360,20,0.1,18,0,30,"g",0,"kaese_ww"],
+  ["Gouda 30% Fett i.Tr.",250,25,0,10,0,30,"g",0,"kaese_ww"],
+  ["Gouda 45-48% Fett i.Tr.",320,24,0,15,0,30,"g",0,"kaese_ww"],
+  ["Greyerzer 45% Fett i.Tr.",330,28,0.1,16,0,30,"g",0,"kaese_ww"],
+  ["Hüttenkäse 20-25% Fett i.Tr. (1 EL 30g)",98,11,3.5,1.5,0,30,"g",1,"kaese_ww"],
+  ["Käse Fondue (100g)",400,20,2,22,0,100,"g",0,"kaese_ww"],
+  ["Käse gerieben 30-32% Fett i.Tr. (1 EL 8g)",300,28,0.1,14,0,8,"g",1,"kaese_ww"],
+  ["Kochkäse 10% Fett i.Tr. (2 EL 30g)",130,12,2,4,0,30,"g",1,"kaese_ww"],
+  ["Mascarpone (1 EL 20g)",390,6,4,21,0,20,"g",1,"kaese_ww"],
+  ["Mozzarella (½ Kugel 50g)",280,18,0.5,14,0,50,"g",1,"kaese_ww"],
+  ["Parmesan 30-32% Fett i.Tr.",380,36,0.1,15,0,20,"g",0,"kaese_ww"],
+  ["Provolone 50% Fett i.Tr.",350,24,0.1,17,0,30,"g",0,"kaese_ww"],
+  ["Raclettekäse 60% Fett i.Tr.",380,22,0.1,20,0,30,"g",0,"kaese_ww"],
+  ["Roquefort",370,21,0.1,19,0,30,"g",0,"kaese_ww"],
+  ["Schafskäse / Feta 45% Fett i.Tr.",250,14,0.5,13,0,30,"g",0,"kaese_ww"],
+  ["Schmelzkäse 20-25% Fett i.Tr. (25g)",160,10,3,7,0,25,"g",1,"kaese_ww"],
+  ["Schmelzkäse 45% Fett i.Tr. (25g)",240,9,3,13,0,25,"g",1,"kaese_ww"],
+  ["Tilsiter 45% Fett i.Tr.",300,24,0.1,15,0,30,"g",0,"kaese_ww"],
+  // 🌾 GETREIDE & GETREIDEPRODUKTE (WW)
+  ["Buchweizen trocken (1 EL 20g)",340,13,2,1.5,10,20,"g",1,"getreide_ww"],
+  ["Bulgur trocken (1 EL 20g)",340,13,1,1,12,20,"g",1,"getreide_ww"],
+  ["Couscous trocken (1 EL 20g)",360,13,1,0.5,5,20,"g",1,"getreide_ww"],
+  ["Cornflakes (1 Tasse 20g)",370,7,8,0.5,3,20,"g",1,"getreide_ww"],
+  ["Graupen trocken (1 EL 20g)",340,10,1,1,10,20,"g",1,"getreide_ww"],
+  ["Grieß trocken (0,5 EL 5g)",360,12,1,1,3,5,"g",1,"getreide_ww"],
+  ["Grünkern (1 Portion 20g)",340,13,2,2,10,20,"g",1,"getreide_ww"],
+  ["Haferflocken (1 EL 10g)",370,12,1,2,10,10,"g",1,"getreide_ww"],
+  ["Hirse trocken (1 EL 20g)",370,11,1,3,4,20,"g",1,"getreide_ww"],
+  ["Knuspermüsli gesüßt (30g)",420,7,18,6,5,30,"g",1,"getreide_ww"],
+  ["Maismehl / Polenta trocken (1 EL 10g)",360,9,1,1.5,7,10,"g",1,"getreide_ww"],
+  ["Mehl jede Sorte (1 EL 10g)",350,10,1,0.5,3,10,"g",1,"getreide_ww"],
+  ["Milchreis trocken (1 EL 20g)",360,7,1,0.5,1,20,"g",1,"getreide_ww"],
+  ["Müsli ohne Zuckerzusatz (30g)",360,9,6,4,8,30,"g",1,"getreide_ww"],
+  ["Müsliriegel (1 kleiner 25g)",410,7,22,8,4,25,"g",1,"getreide_ww"],
+  ["Reis trocken (1 EL 20g)",360,7,1,0.5,1,20,"g",1,"getreide_ww"],
+  ["Reis trocken (½ Kochbeutel 60g)",360,7,1,0.5,1,60,"g",1,"getreide_ww"],
+  ["Reiswaffel (1 Stück 8g)",380,7,1,1,2,8,"g",1,"getreide_ww"],
+  ["Risi Bisi / Erbsenreis (1 Kugel 100g)",130,5,2,0.5,3,100,"g",1,"getreide_ww"],
+  ["Schokomüsli (30g)",420,8,25,6,4,30,"g",1,"getreide_ww"],
+  ["Weizenkeime (2 EL 10g)",360,29,3,9,14,10,"g",1,"getreide_ww"],
+  ["Wildreis trocken (1 EL 20g)",350,15,1,0.5,6,20,"g",1,"getreide_ww"],
+  // 🍺 GETRÄNKE ALKOHOLFREI (WW)
+  ["Alkoholfreies Bier (250ml)",80,0.8,5,0,0,250,"ml",1,"getraenke_alkfrei"],
+  ["Apfelsaftschorle (200ml)",55,0.2,11,0,0,200,"ml",0,"getraenke_alkfrei"],
+  ["Bitter Lemon (200ml)",70,0,15,0,0,200,"ml",1,"getraenke_alkfrei"],
+  ["Cappuccino mit Sahne (150ml)",120,4,8,5,0,150,"ml",1,"getraenke_alkfrei"],
+  ["Cola (200ml)",80,0,19,0,0,200,"ml",1,"getraenke_alkfrei"],
+  ["Cola light / zero (200ml)",1,0,0,0,0,200,"ml",1,"getraenke_alkfrei"],
+  ["Eistee (200ml)",80,0,18,0,0,200,"ml",0,"getraenke_alkfrei"],
+  ["Energydrink (200ml)",100,0.5,21,0,0,200,"ml",1,"getraenke_alkfrei"],
+  ["Fruchtnektar mit Zucker (200ml)",110,0.5,24,0.2,0.5,200,"ml",1,"getraenke_alkfrei"],
+  ["Fruchtsaft (200ml)",85,0.8,17,0.2,0.5,200,"ml",0,"getraenke_alkfrei"],
+  ["Gemüsesaft (200ml)",40,2,5,0.2,1,200,"ml",0,"getraenke_alkfrei"],
+  ["Ginger Ale (200ml)",70,0,16,0,0,200,"ml",1,"getraenke_alkfrei"],
+  ["Kaffee schwarz (200ml)",2,0.3,0,0.1,0,200,"ml",0,"getraenke_alkfrei"],
+  ["Kräutertee / Früchtetee (200ml)",0,0,0,0,0,200,"ml",0,"getraenke_alkfrei"],
+  ["Light-Getränke bis 18 kcal (200ml)",2,0,0,0,0,200,"ml",0,"getraenke_alkfrei"],
+  ["Limonaden (200ml)",100,0,22,0,0,200,"ml",1,"getraenke_alkfrei"],
+  ["Malzkaffee / Caro-Kaffee (200ml)",20,1,3,0.5,1,200,"ml",0,"getraenke_alkfrei"],
+  ["Milchkaffee (300ml)",130,6,10,3.5,0,300,"ml",0,"getraenke_alkfrei"],
+  ["Schokolade / Kakao (200ml)",180,6,22,5,2,200,"ml",1,"getraenke_alkfrei"],
+  ["Tomatensaft (200ml)",36,2,5,0.2,1,200,"ml",0,"getraenke_alkfrei"],
+  ["Tonic Water (200ml)",70,0,16,0,0,200,"ml",1,"getraenke_alkfrei"],
+  ["Wasser jede Sorte (200ml)",0,0,0,0,0,200,"ml",0,"getraenke_alkfrei"],
+  // 🍷 GETRÄNKE ALKOHOLISCH (WW)
+  ["Apfelwein / Cidre (200ml)",100,0.3,8,0,0,200,"ml",0,"getraenke_alk"],
+  ["Berliner Weiße mit Schuss (250ml)",130,1,12,0,0,250,"ml",1,"getraenke_alk"],
+  ["Bier jede Sorte (250ml)",105,0.8,0,0,0,250,"ml",0,"getraenke_alk"],
+  ["Bier Flasche (330ml)",139,1,0,0,0,330,"ml",1,"getraenke_alk"],
+  ["Bockbier / Starkbier (200ml)",140,1.5,4,0,0,200,"ml",1,"getraenke_alk"],
+  ["Bowle / Punsch (200ml)",175,0.5,20,0,0,200,"ml",1,"getraenke_alk"],
+  ["Caipirinha (200ml)",230,0,22,0,0,200,"ml",1,"getraenke_alk"],
+  ["Campari (50ml)",210,0,20,0,0,50,"ml",1,"getraenke_alk"],
+  ["Champagner / Sekt (100ml)",80,0.3,3,0,0,100,"ml",1,"getraenke_alk"],
+  ["Cognac / Weinbrand (20ml)",250,0,0,0,0,20,"ml",1,"getraenke_alk"],
+  ["Gin Tonic (200ml)",160,0,10,0,0,200,"ml",1,"getraenke_alk"],
+  ["Glühwein (200ml)",200,0.5,25,0,0,200,"ml",1,"getraenke_alk"],
+  ["Likör jede Sorte (20ml)",280,0,30,0,0,20,"ml",1,"getraenke_alk"],
+  ["Malzbier (200ml)",130,1,18,0,0,200,"ml",1,"getraenke_alk"],
+  ["Radler / Bier mit Limonade (200ml)",80,0.5,5,0,0,200,"ml",1,"getraenke_alk"],
+  ["Rum (20ml)",220,0,0,0,0,20,"ml",1,"getraenke_alk"],
+  ["Schnaps jede Sorte (20ml)",210,0,0,0,0,20,"ml",1,"getraenke_alk"],
+  ["Tequila Sunrise (200ml)",230,0.5,22,0,0,200,"ml",1,"getraenke_alk"],
+  ["Wein rot trocken (125ml)",85,0.1,0.5,0,0,125,"ml",1,"getraenke_alk"],
+  ["Wein weiß trocken (125ml)",83,0.1,0.8,0,0,125,"ml",1,"getraenke_alk"],
+  ["Wein schwer & süß (100ml)",130,0.2,12,0,0,100,"ml",1,"getraenke_alk"],
+  ["Weinschorle (200ml)",85,0.1,5,0,0,200,"ml",1,"getraenke_alk"],
+  ["Weizenbier / Weißbier (500ml)",230,2,0,0,0,500,"ml",1,"getraenke_alk"],
+  ["Wermut süß (50ml)",130,0.2,15,0,0,50,"ml",1,"getraenke_alk"],
+  ["Whisky (20ml)",220,0,0,0,0,20,"ml",1,"getraenke_alk"],
+  // 🥦 GEMÜSE & HÜLSENFRÜCHTE (WW)
+  ["Algen (100g)",25,2,0.5,0.5,5,100,"g",0,"gemuese_ww"],
+  ["Artischocken (100g)",47,3,3,0.2,5,100,"g",0,"gemuese_ww"],
+  ["Auberginen (100g)",25,1,3,0.2,3,100,"g",0,"gemuese_ww"],
+  ["Bambussprossen (100g)",27,2,2,0.3,2,100,"g",0,"gemuese_ww"],
+  ["Blattsalat jede Sorte (100g)",15,1.5,1.5,0.2,2,100,"g",0,"gemuese_ww"],
+  ["Bleichsellerie (100g)",15,1,1.5,0.2,2,100,"g",0,"gemuese_ww"],
+  ["Chinakohl (100g)",12,1,1.5,0.1,1.5,100,"g",0,"gemuese_ww"],
+  ["Dicke Bohnen (1 Portion 150g)",105,8,2,0.5,6,150,"g",1,"gemuese_ww"],
+  ["Erbsen grün Konserve (2 EL 50g)",70,5,3,0.5,5,50,"g",1,"gemuese_ww"],
+  ["Fenchel (100g)",27,2,3,0.2,3,100,"g",0,"gemuese_ww"],
+  ["Grünkohl / Braunkohl (100g)",50,4,2,0.8,4,100,"g",0,"gemuese_ww"],
+  ["Kidneybohnen trocken (1 EL 20g)",335,22,1,1.5,18,20,"g",1,"gemuese_ww"],
+  ["Kidneybohnen verzehrfertig (1 EL 25g)",90,6,0.5,0.5,7,25,"g",1,"gemuese_ww"],
+  ["Knoblauch (10g)",149,6,1,0.5,5,10,"g",0,"gemuese_ww"],
+  ["Kohlrabi (100g)",27,2,4,0.2,2,100,"g",0,"gemuese_ww"],
+  ["Kürbis (100g)",27,1,3,0.2,2,100,"g",0,"gemuese_ww"],
+  ["Linsen trocken (1 EL 20g)",335,25,1,1,10,20,"g",1,"gemuese_ww"],
+  ["Mais Konserve (2 EL 50g)",85,3,5,1,3,50,"g",1,"gemuese_ww"],
+  ["Maiskolben (1 Stück 100g)",90,3,5,1.5,3,100,"g",1,"gemuese_ww"],
+  ["Mangold (100g)",20,2,1,0.2,2,100,"g",0,"gemuese_ww"],
+  ["Okra (100g)",30,2,3,0.2,3,100,"g",0,"gemuese_ww"],
+  ["Oliven grün (5 Stück 25g)",150,1,0.5,12,4,25,"g",1,"gemuese_ww"],
+  ["Oliven schwarz (1 Stück 5g)",200,1.5,0.5,18,4,5,"g",1,"gemuese_ww"],
+  ["Porree / Lauch (100g)",29,2,3,0.2,3,100,"g",0,"gemuese_ww"],
+  ["Rosenkohl (100g)",43,3,3,0.5,4,100,"g",0,"gemuese_ww"],
+  ["Rote Bete (100g)",43,2,8,0.1,3,100,"g",0,"gemuese_ww"],
+  ["Rotkohl / Blaukraut (100g)",31,2,4,0.2,3,100,"g",0,"gemuese_ww"],
+  ["Sauerkraut (100g)",19,1,2,0.2,3,100,"g",0,"gemuese_ww"],
+  ["Sellerie (100g)",18,1,2,0.2,2,100,"g",0,"gemuese_ww"],
+  ["Staudensellerie (100g)",15,1,1.5,0.2,2,100,"g",0,"gemuese_ww"],
+  ["Weißkohl (100g)",25,1.5,4,0.2,2.5,100,"g",0,"gemuese_ww"],
+  ["Wirsing (100g)",27,2,3,0.2,3,100,"g",0,"gemuese_ww"],
+  ["Zuckererbsenschoten (1 Hand 50g)",42,3,4,0.3,3,50,"g",1,"gemuese_ww"],
+  ["Zwiebeln (100g)",40,1.5,7,0.2,1.5,100,"g",0,"gemuese_ww"],
+  // 🍓 OBST & OBSTPRODUKTE (WW)
+  ["Ananas (100g)",50,0.5,10,0.1,1.5,100,"g",0,"obst_ww"],
+  ["Aprikose (100g)",48,1,9,0.1,2,100,"g",0,"obst_ww"],
+  ["Bananenchips ungesüßt (1 Portion 40g)",520,3,30,22,6,40,"g",1,"obst_ww"],
+  ["Banane (1 kleine 100g)",89,1,16,0.1,2.5,100,"g",1,"obst_ww"],
+  ["Birne (100g)",57,0.5,11,0.1,3,100,"g",0,"obst_ww"],
+  ["Datteln frisch (2 Stück 12g)",280,2,65,0.2,8,12,"g",1,"obst_ww"],
+  ["Feigen frisch (1 Stück 50g)",74,1,14,0.3,3,50,"g",1,"obst_ww"],
+  ["Granatapfel (1 Portion 100g)",68,1,13,0.1,4,100,"g",1,"obst_ww"],
+  ["Grapefruit (100g)",40,0.8,7,0.1,1.5,100,"g",0,"obst_ww"],
+  ["Guave (100g)",68,2.5,9,0.5,5,100,"g",0,"obst_ww"],
+  ["Kaki / Persimone (100g)",70,0.7,13,0.4,3,100,"g",0,"obst_ww"],
+  ["Kiwi (100g)",61,1,10,0.5,3,100,"g",0,"obst_ww"],
+  ["Kirschen (8 Stück 50g)",60,1,12,0.3,1.5,50,"g",1,"obst_ww"],
+  ["Kumquats (100g)",71,2,10,0.5,6,100,"g",0,"obst_ww"],
+  ["Limette (100g)",30,0.7,1.5,0.2,3,100,"g",0,"obst_ww"],
+  ["Litchi / Lychees (4 Stück 50g)",66,0.8,14,0.1,1.5,50,"g",1,"obst_ww"],
+  ["Mandarine (100g)",43,0.8,8,0.1,1.8,100,"g",0,"obst_ww"],
+  ["Mango (½ kleine Frucht 100g)",60,0.5,12,0.2,1.5,100,"g",1,"obst_ww"],
+  ["Melone jede Sorte (100g)",37,0.6,7,0.1,1,100,"g",0,"obst_ww"],
+  ["Mirabellen (3 Stück 60g)",58,0.8,11,0.2,2,60,"g",1,"obst_ww"],
+  ["Nektarine (100g)",57,1,11,0.2,2,100,"g",0,"obst_ww"],
+  ["Obstkonserven mit Zucker (150g)",100,0.5,22,0.1,1,150,"g",1,"obst_ww"],
+  ["Obstscheiben getrocknet (1 Portion 40g)",260,2,55,0.5,8,40,"g",1,"obst_ww"],
+  ["Papaya (100g)",42,0.5,8,0.2,2,100,"g",0,"obst_ww"],
+  ["Passionsfrucht (1 Stück 30g)",97,2,8,0.7,10,30,"g",1,"obst_ww"],
+  ["Pfirsich (100g)",39,0.9,7.5,0.1,1.5,100,"g",0,"obst_ww"],
+  ["Pflaumen (1 Stück 50g)",46,0.7,9,0.2,1.5,50,"g",1,"obst_ww"],
+  ["Pomelo (100g)",38,0.7,7,0.1,1,100,"g",0,"obst_ww"],
+  ["Reineclauden (3 Stück 60g)",44,0.7,8.5,0.2,2,60,"g",1,"obst_ww"],
+  ["Rosinen (2 EL 14g)",299,2.5,62,0.5,4,14,"g",1,"obst_ww"],
+  ["Tangerine (100g)",43,0.8,8,0.1,1.8,100,"g",0,"obst_ww"],
+  ["Trockenobst jede Sorte (1 Stück 20g)",280,2,60,0.5,7,20,"g",1,"obst_ww"],
+  ["Weintrauben (1 Hand voll 100g)",70,0.7,14,0.2,1,100,"g",1,"obst_ww"],
+  ["Zwetschgen (2 Stück 50g)",46,0.7,9,0.2,1.5,50,"g",1,"obst_ww"],
+  // 🍗 GEFLÜGEL & GEFLÜGELPRODUKTE (WW)
+  ["Brathähnchen mit Haut (½ Stück 370g roh)",250,25,0,12,0,185,"g",1,"geflugel"],
+  ["Brathähnchen ohne Haut (½ Stück 280g)",200,28,0,6,0,140,"g",1,"geflugel"],
+  ["Entenbrust ohne Haut (150g)",160,26,0,4,0,150,"g",0,"geflugel"],
+  ["Gans roh (1 Portion 150g roh)",280,17,0,16,0,120,"g",1,"geflugel"],
+  ["Gänsekeule (1 kleine 300g roh)",280,20,0,15,0,240,"g",1,"geflugel"],
+  ["Geflügelbrustaufschnitt geräuchert",130,22,0.5,3,0,30,"g",0,"geflugel"],
+  ["Geflügelfrikadelle (1 kleine 100g)",200,16,2,8,1,100,"g",1,"geflugel"],
+  ["Geflügelleber roh (1 Portion 100g)",135,20,0.5,4,0,100,"g",0,"geflugel"],
+  ["Geflügelleberwurst (1 EL 15g)",250,14,1,13,0,15,"g",1,"geflugel"],
+  ["Geflügelmortadella (30g)",130,16,2,4,0,30,"g",0,"geflugel"],
+  ["Geflügelsalami (30g)",200,20,1,9,0,30,"g",0,"geflugel"],
+  ["Geflügelschinken (30g)",110,22,0.5,1.5,0,30,"g",0,"geflugel"],
+  ["Geflügelschnitzel / -filet roh (120g)",130,22,0,2,0,120,"g",0,"geflugel"],
+  ["Geflügelschnitzel paniert (150g)",230,20,5,8,2,150,"g",1,"geflugel"],
+  ["Geflügelwurst kalorienreduziert (100g)",150,16,2,6,0,100,"g",0,"geflugel"],
+  ["Geflügelwurstaufschnitt (30g)",110,18,0.5,3,0,30,"g",0,"geflugel"],
+  ["Hähnchenkeule mit Haut (200g roh)",220,20,0,10,0,160,"g",1,"geflugel"],
+  ["Hähnchenkeule ohne Haut (100g)",155,22,0,5,0,100,"g",0,"geflugel"],
+  ["Straußenfleisch (1 kleines Stück 125g roh)",130,22,0,2,0,100,"g",1,"geflugel"],
+  ["Suppenhuhn mit Knochen (150g)",200,18,0,10,0,150,"g",1,"geflugel"],
+  // 🍕 PIZZA & AUSWÄRTS (WW)
+  ["Baguette mit Salami (1 Portion)",350,14,3,12,2,180,"g",1,"pizza_auswarts"],
+  ["Baguette mit Schinken (1 Portion)",290,16,3,8,2,180,"g",1,"pizza_auswarts"],
+  ["Blattsalat mit Putenstreifen (1 Portion)",220,22,4,6,3,300,"g",1,"pizza_auswarts"],
+  ["Bockwurst mit Brötchen",480,18,5,22,3,220,"g",1,"pizza_auswarts"],
+  ["Brötchen mit Käse (½ Stück)",200,9,2,8,2,80,"g",1,"pizza_auswarts"],
+  ["Currywurst mit Sauce",450,16,12,22,2,250,"g",1,"pizza_auswarts"],
+  ["Döner Kebab",290,15,3,11,2,200,"g",1,"pizza_auswarts"],
+  ["Folienkartoffel mit Saurer Sahne",220,5,2,4,3,300,"g",1,"pizza_auswarts"],
+  ["Hamburger",300,16,7,10,2,150,"g",1,"pizza_auswarts"],
+  ["Krabbenbrötchen",310,14,3,10,2,150,"g",1,"pizza_auswarts"],
+  ["Milchshake Vanille (300ml)",230,6,28,5,0,300,"ml",1,"pizza_auswarts"],
+  ["Pizza Margherita TK (300g)",220,9,4,6,2,300,"g",1,"pizza_auswarts"],
+  ["Pizza mit Gemüse TK (360g)",200,8,4,5,2.5,360,"g",1,"pizza_auswarts"],
+  ["Pizza Salami TK (320g)",270,11,4,9,2,320,"g",1,"pizza_auswarts"],
+  ["Pizza mit Schinken TK (330g)",240,11,4,7,2,330,"g",1,"pizza_auswarts"],
+  ["Salat Nizza mit Tunfisch und Ei",200,15,4,8,3,250,"g",1,"pizza_auswarts"],
+  ["Toast Hawaii",280,15,8,10,1,150,"g",1,"pizza_auswarts"],
+  ["Tomatensuppe (1 Portion 250ml)",90,3,8,2,2,250,"ml",1,"pizza_auswarts"],
+  ["Türkische Pizza (1 Portion)",340,16,4,12,3,200,"g",1,"pizza_auswarts"],
+];
+
+const CATS=[
+  {l:"Alle",k:""},{l:"⭐ Meine",k:"meine"},
+  {l:"🍞 Brot & Brötchen",k:"brot_ww"},{l:"🧈 Brotaufstriche",k:"aufstrich"},
+  {l:"🍮 Desserts & Süßspeisen",k:"dessert_ww"},{l:"🍦 Eis",k:"eis"},
+  {l:"🍬 Süßigkeiten",k:"suesswaren"},{l:"🍪 Kekse",k:"kekse"},
+  {l:"🎂 Kuchen",k:"kuchen"},{l:"🥞 Pfannkuchen & Crêpes",k:"pfannkuchen"},
+  {l:"🍯 Zucker & Aufstriche",k:"zucker"},
+  {l:"🍫 Schokolade & Snacks",k:"suesses"},
+  {l:"🌰 Nüsse & Samen",k:"nuesse"},
+  {l:"🍝 Nudeln & Co.",k:"nudeln"},
+  {l:"🌾 Getreide & Getreideprodukte",k:"getreide_ww"},
+  {l:"🥖 Getreide",k:"getreide"},
+  {l:"🍕 Pizza & Auswärts",k:"pizza_auswarts"},
+  {l:"🥗 Salate",k:"salat"},
+  {l:"🫙 Saucen Dressings & Fix",k:"saucen_ww"},
+  {l:"🫙 Saucen",k:"saucen"},
+  {l:"🧂 Würzmittel & Zutaten",k:"wuerz"},
+  {l:"🌿 Vegetarische Produkte & Ei",k:"vegprod"},
+  {l:"🍗 Geflügel & Geflügelprodukte",k:"geflugel"},
+  {l:"🥩 Fleisch & Wurst",k:"fleisch"},
+  {l:"🌭 Wurst",k:"wurst"},
+  {l:"🐟 Fisch",k:"fisch"},
+  {l:"🧀 Käse",k:"kaese_ww"},
+  {l:"🧀 Käse",k:"kaese"},
+  {l:"🥚 Eier",k:"eier"},
+  {l:"🥛 Milch & Milchprodukte",k:"milch_ww"},
+  {l:"🥛 Milch",k:"milch"},
+  {l:"🥦 Gemüse & Hülsenfrüchte",k:"gemuese_ww"},
+  {l:"🥦 Gemüse",k:"gemuese"},
+  {l:"🍓 Obst & Obstprodukte",k:"obst_ww"},
+  {l:"🍎 Obst",k:"obst"},
+  {l:"🍺 Getränke alkoholfrei",k:"getraenke_alkfrei"},
+  {l:"🍷 Getränke alkoholisch",k:"getraenke_alk"},
+  {l:"🥤 Trinken",k:"trinken"},
+  {l:"🥔 Kartoffeln",k:"kartoffel"},
+  {l:"🥑 Fette & Öle",k:"fette"},
+  {l:"🏪 Lidl Backshop",k:"lidl"},
+  {l:"💪 Whey Protein",k:"whey"},
+];
+
+const SPORTS=[
+  {n:"Hula Hoop 15 Min",pts:3},{n:"Hula Hoop 30 Min",pts:6},
+  {n:"Gartenarbeit 30 Min",pts:5},{n:"Tanzen 30 Min",pts:5},
+  {n:"3.000 Schritte",pts:4},{n:"5.000 Schritte",pts:6},
+  {n:"8.000 Schritte",pts:9},{n:"10.000 Schritte",pts:12},
+];
+
+const MEAS=[
+  {k:"taille",l:"Taille",c:"#ec4899"},
+  {k:"hufte",l:"Hüfte",c:"#a855f7"},
+  {k:"brust",l:"Brust",c:"#3b82f6"},
+  {k:"arm",l:"Oberarm",c:"#f59e0b"},
+  {k:"bein",l:"Oberschenkel",c:"#10b981"},
+];
+
+const WEEKLY=21;
+const ALTER=47,GROESSE=162;
+
+// ═══════════════════════════════════════════════
+// STATE – loaded from localStorage
+// ═══════════════════════════════════════════════
+function load(k,def){try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):def;}catch{return def;}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+
+let foodLog=load("pp_foodLog",[]);
+let sportLog=load("pp_sportLog",[]);
+let sportPts=load("pp_sportPts",0);
+let weeklyUsed=load("pp_weeklyUsed",0);
+let budget=load("pp_budget",38);
+let weightHistory=load("pp_weightHistory",[]);
+let measHistory=load("pp_measHistory",[]);
+let curSearch="",curCat="",selFood=null,manualPts=null;
+
+// Auto-reset daily log at midnight
+const today=new Date().toDateString();
+if(load("pp_logDate","")!==today){
+  foodLog=[];sportLog=[];sportPts=0;weeklyUsed=0;
+  save("pp_foodLog",[]);save("pp_sportLog",[]);save("pp_sportPts",0);save("pp_weeklyUsed",0);
+  save("pp_logDate",today);
+}
+
+// ═══════════════════════════════════════════════
+// CALCULATIONS
+// ═══════════════════════════════════════════════
+function calcBudget(kg){
+  const bmr=10*kg+6.25*GROESSE-5*ALTER-161;
+  return Math.min(50,Math.max(22,Math.round((bmr*1.2-400)/33)));
+}
+function pts(k,p,s,sf,f){return Math.max(0,Math.round(k*0.0305-p*0.18+s*0.065+sf*0.12-f*0.08));}
+function ptsPor(food,g){const r=g/100;return Math.max(0,Math.round(food[1]*r*0.0305-food[2]*r*0.18+food[3]*r*0.065+food[4]*r*0.12-food[5]*r*0.08));}
+function ptsCol(p){return p===0?"#16a34a":p<=3?"#db2777":p<=7?"#d97706":"#dc2626";}
+function ptsClass(p){return p===0?"cg":p<=3?"cp":p<=7?"co":"cr";}
+function dailyUsed(){return foodLog.reduce((s,e)=>s+e.pts,0);}
+function effBudget(){return budget+sportPts;}
+function remaining(){return effBudget()-dailyUsed();}
+
+// ═══════════════════════════════════════════════
+// BUDGET DISPLAY
+// ═══════════════════════════════════════════════
+function updBudget(){
+  const used=dailyUsed(),rem=remaining(),eb=effBudget();
+  const re=document.getElementById("b-rem");
+  re.textContent=rem;
+  re.style.color=rem<0?"#dc2626":rem<=5?"#d97706":"#db2777";
+  document.getElementById("b-sub").textContent="von "+eb+" Pkt.";
+  document.getElementById("b-bar").style.width=Math.min(100,eb>0?used/eb*100:0)+"%";
+  document.getElementById("b-sport").textContent="+"+sportPts;
+  document.getElementById("b-sport-bar").style.width=Math.min(100,sportPts/15*100)+"%";
+  document.getElementById("b-wex").textContent=WEEKLY-weeklyUsed;
+  document.getElementById("b-wex-bar").style.width=Math.min(100,weeklyUsed/WEEKLY*100)+"%";
+  document.getElementById("b-day").textContent=budget;
+}
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const PAGES=["essen","sport","gewicht","masse","tagebuch"];
+function showTab(name,btn){
+  PAGES.forEach(p=>{const el=document.getElementById("page-"+p);if(el)el.classList.toggle("hidden",p!==name);});
+  document.querySelectorAll(".tabs .tab").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+  if(name==="gewicht")renderWeightChart();
+  if(name==="masse")renderMeasChart();
+}
+function showSub(name,btn){
+  document.getElementById("sub-liste").classList.toggle("hidden",name!=="liste");
+  document.getElementById("sub-manuell").classList.toggle("hidden",name!=="manuell");
+  btn.closest(".subtabs").querySelectorAll(".tab").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+}
+
+// ═══════════════════════════════════════════════
+// FOOD LIST
+// ═══════════════════════════════════════════════
+function renderCats(){
+  const el=document.getElementById("cats");
+  el.innerHTML=CATS.map(c=>`<option value="${c.k}"${c.k===curCat?" selected":""}>${c.l}</option>`).join("");
+}
+function selCat(k){curCat=k;document.getElementById("srch").value="";curSearch="";renderFoods();}
+function filterF(s){curSearch=s;curCat="";document.getElementById("cats").value="";renderFoods();}
+
+function renderFoods(){
+  const list=FDB.filter(f=>f[0].toLowerCase().includes(curSearch.toLowerCase())&&(curCat===""||f[9]===curCat));
+  const el=document.getElementById("flist");
+  if(!list.length){el.innerHTML='<div style="text-align:center;padding:20px;font-size:12px;color:#d1d5db">Nichts gefunden.</div>';return;}
+  el.innerHTML=list.map(f=>{
+    const idx=FDB.indexOf(f),p=ptsPor(f,f[6]),fixed=f[8];
+    const ul=f[7]==="Portion"?"1 Portion":f[7]==="ml"?f[6]+"ml":f[6]+"g";
+    const adj=!fixed?'<span style="color:#93c5fd;margin-left:3px">anpassbar</span>':"";
+    return `<div class="frow" onclick="openFood(${idx})">
+      <div style="flex:1;min-width:0;padding-right:8px">
+        <div class="fn">${f[0]}</div>
+        <div class="fs">${ul}${adj}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;flex-shrink:0">
+        <span style="font-size:15px;font-weight:800;min-width:24px;text-align:right;color:${ptsCol(p)}">${p}</span>
+        <button class="fadd" onclick="event.stopPropagation();quickAdd(${idx})">+</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function quickAdd(idx){
+  const f=FDB[idx],p=ptsPor(f,f[6]),por=f[7]==="Portion"?"1 Portion":f[7]==="ml"?f[6]+"ml":f[6]+"g";
+  addToLog(f[0],p,por);
+}
+
+function openFood(idx){
+  const f=FDB[idx];
+  if(f[8]){quickAdd(idx);return;}
+  selFood=idx;
+  const isMl=f[7]==="ml";
+  document.getElementById("m-title").textContent=f[0];
+  document.getElementById("m-sub").textContent="Wie viel "+(isMl?"Milliliter":"Gramm")+" möchtest du eintragen?";
+  document.getElementById("m-unit").textContent=isMl?"ml":"g";
+  document.getElementById("g-inp").value=f[6];
+  const qv=isMl?[100,150,200,250,330,500]:[30,50,75,100,150,200,250];
+  document.getElementById("qrow").innerHTML=qv.map(g=>`<button class="qb${g==f[6]?" on":""}" onclick="setG(${g})">${g}${isMl?"ml":"g"}</button>`).join("");
+  updPrev();
+  document.getElementById("modal").classList.remove("hidden");
+}
+function setG(g){document.getElementById("g-inp").value=g;document.querySelectorAll(".qb").forEach(b=>b.classList.toggle("on",parseInt(b.textContent)===g));updPrev();}
+function adjG(d){const f=FDB[selFood],step=f[7]==="ml"?50:10,c=parseFloat(document.getElementById("g-inp").value)||0;document.getElementById("g-inp").value=Math.max(1,c+d*step);updPrev();}
+function updPrev(){if(selFood===null)return;const g=parseFloat(document.getElementById("g-inp").value)||0,p=ptsPor(FDB[selFood],g),el=document.getElementById("prev-v");el.textContent=p;el.style.color=ptsCol(p);}
+function closeModal(){document.getElementById("modal").classList.add("hidden");selFood=null;}
+function confirmAdd(){if(selFood===null)return;const f=FDB[selFood],g=parseFloat(document.getElementById("g-inp").value)||0,p=ptsPor(f,g);addToLog(f[0],p,g+(f[7]==="ml"?"ml":"g"));closeModal();}
+
+// ═══════════════════════════════════════════════
+// LOG
+// ═══════════════════════════════════════════════
+function addToLog(name,p,portion){
+  const rem=remaining(),ov=Math.max(0,p-rem);
+  if(ov>0){weeklyUsed+=ov;save("pp_weeklyUsed",weeklyUsed);}
+  foodLog.push({name,pts:p,portion});
+  save("pp_foodLog",foodLog);
+  updBudget();renderLog();
+  showTabByName("tagebuch");
+}
+function showTabByName(name){
+  PAGES.forEach(p=>{const el=document.getElementById("page-"+p);if(el)el.classList.toggle("hidden",p!==name);});
+  document.querySelectorAll(".tabs .tab").forEach((b,i)=>b.classList.toggle("on",PAGES[i]===name));
+}
+function removeLog(i){
+  foodLog.splice(i,1);save("pp_foodLog",foodLog);
+  const used=foodLog.reduce((s,e)=>s+e.pts,0);
+  weeklyUsed=Math.max(0,used-effBudget());save("pp_weeklyUsed",weeklyUsed);
+  updBudget();renderLog();
+}
+function resetLog(){
+  foodLog=[];sportLog=[];sportPts=0;weeklyUsed=0;
+  save("pp_foodLog",[]);save("pp_sportLog",[]);save("pp_sportPts",0);save("pp_weeklyUsed",0);
+  updBudget();renderLog();renderSportLog();
+}
+function renderLog(){
+  const used=dailyUsed(),eb=effBudget();
+  const empty=document.getElementById("log-empty"),items=document.getElementById("log-items"),total=document.getElementById("log-total"),wex=document.getElementById("wex-row");
+  if(!foodLog.length){empty.style.display="block";items.innerHTML="";total.classList.add("hidden");return;}
+  empty.style.display="none";
+  items.innerHTML=foodLog.map((e,i)=>`<div class="lrow">
+    <div style="flex:1;min-width:0;padding-right:8px">
+      <div style="font-size:12px;color:#4b5563;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.name}</div>
+      <div style="font-size:10px;color:#d1d5db">${e.portion||""}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px">
+      <span style="font-size:12px;font-weight:700;color:#db2777">${e.pts} Pkt.</span>
+      <button onclick="removeLog(${i})" style="background:none;border:none;color:#e5e7eb;font-size:11px;cursor:pointer">✕</button>
+    </div>
+  </div>`).join("");
+  total.classList.remove("hidden");
+  const tv=document.getElementById("log-total-val");
+  tv.textContent=used+" / "+eb+" Pkt.";
+  tv.style.color=used>eb?"#dc2626":"#db2777";
+  if(weeklyUsed>0){wex.style.display="flex";document.getElementById("wex-val").textContent=weeklyUsed+" Pkt.";}
+  else wex.style.display="none";
+}
+
+// ═══════════════════════════════════════════════
+// MANUAL
+// ═══════════════════════════════════════════════
+function calcManual(){
+  const k=parseFloat(document.getElementById("mn-k").value)||0,p=parseFloat(document.getElementById("mn-p").value)||0,s=parseFloat(document.getElementById("mn-s").value)||0,sf=parseFloat(document.getElementById("mn-sf").value)||0,f=parseFloat(document.getElementById("mn-f").value)||0;
+  manualPts=pts(k,p,s,sf,f);
+  document.getElementById("mn-pts").textContent=manualPts;
+  document.getElementById("mn-res").classList.remove("hidden");
+}
+function addManual(){
+  if(manualPts===null)return;
+  const name=document.getElementById("mn-name").value.trim()||"Lebensmittel";
+  addToLog(name,manualPts,"1 Portion");
+  ["mn-name","mn-k","mn-p","mn-s","mn-sf","mn-f"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("mn-res").classList.add("hidden");
+  manualPts=null;
+}
+
+// ═══════════════════════════════════════════════
+// SPORT
+// ═══════════════════════════════════════════════
+function renderSportGrid(){
+  document.getElementById("sgrid").innerHTML=SPORTS.map((s,i)=>
+    `<div class="sc" onclick="addSport(${i})"><div class="sn">${s.n}</div><div class="sp">+${s.pts}</div><div style="font-size:10px;color:#4ade80">Punkte</div></div>`
+  ).join("");
+}
+function addSport(i){
+  const s=SPORTS[i];sportPts+=s.pts;sportLog.push({n:s.n,pts:s.pts});
+  save("pp_sportPts",sportPts);save("pp_sportLog",sportLog);
+  updBudget();renderSportLog();
+}
+function addCustomSport(){
+  const ppm=parseFloat(document.getElementById("cs-sel").value)||0.21;
+  const min=parseFloat(document.getElementById("cs-min").value)||30;
+  const p=Math.max(1,Math.round(ppm*min));
+  const sel=document.getElementById("cs-sel");
+  const name=sel.options[sel.selectedIndex].text+" ("+min+" Min)";
+  sportPts+=p;sportLog.push({n:name,pts:p});
+  save("pp_sportPts",sportPts);save("pp_sportLog",sportLog);
+  updBudget();renderSportLog();
+}
+function removeSport(i){
+  sportPts=Math.max(0,sportPts-sportLog[i].pts);sportLog.splice(i,1);
+  save("pp_sportPts",sportPts);save("pp_sportLog",sportLog);
+  updBudget();renderSportLog();
+}
+function renderSportLog(){
+  const empty=document.getElementById("slog-empty"),items=document.getElementById("slog-items");
+  if(!sportLog.length){empty.style.display="block";items.innerHTML="";return;}
+  empty.style.display="none";
+  items.innerHTML=sportLog.map((s,i)=>`<div class="slog-row">
+    <span style="font-size:12px;color:#166534">${s.n}</span>
+    <div style="display:flex;align-items:center;gap:7px">
+      <span style="font-size:12px;font-weight:700;color:#16a34a">+${s.pts} Pkt.</span>
+      <button onclick="removeSport(${i})" style="background:none;border:none;color:#bbf7d0;font-size:11px;cursor:pointer">✕</button>
+    </div>
+  </div>`).join("");
+}
+
+// ═══════════════════════════════════════════════
+// WEIGHT
+// ═══════════════════════════════════════════════
+function saveWeight(){
+  const v=parseFloat(document.getElementById("w-inp").value);
+  if(isNaN(v)||v<30||v>300){alert("Bitte gültiges Gewicht eingeben.");return;}
+  const today=new Date().toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"});
+  weightHistory=weightHistory.filter(e=>e.date!==today);
+  weightHistory.unshift({date:today,kg:v});
+  if(weightHistory.length>20)weightHistory=weightHistory.slice(0,20);
+  budget=calcBudget(v);
+  save("pp_weightHistory",weightHistory);save("pp_budget",budget);
+  document.getElementById("w-inp").value="";
+  const ok=document.getElementById("w-ok");
+  ok.textContent="✅ Budget angepasst auf "+budget+" Punkte/Tag! ("+v+" kg, sitzend, kein Hula Hoop)";
+  ok.classList.remove("hidden");
+  setTimeout(()=>ok.classList.add("hidden"),4000);
+  updBudget();renderWeightHistory();renderWeightChart();renderBudgetTable();
+}
+function renderWeightHistory(){
+  const el=document.getElementById("w-hist");
+  if(!weightHistory.length){el.innerHTML="";return;}
+  el.innerHTML=weightHistory.slice(0,6).map((e,i)=>{
+    const prev=weightHistory[i+1],diff=prev?(e.kg-prev.kg).toFixed(1):null;
+    const dc=diff!==null?(diff<0?"dd":diff>0?"du":"ds"):"";
+    const ds=diff!==null?`<span class="dbadge ${dc}">${diff<0?"▼":diff>0?"▲":"="} ${Math.abs(diff)} kg</span>`:"";
+    return `<div class="wrow"><span style="color:#9ca3af">${e.date}</span><span style="font-weight:700">${e.kg.toFixed(1)} kg</span><span style="color:#9ca3af">→ ${calcBudget(e.kg)} Pkt.</span>${ds}</div>`;
+  }).join("");
+}
+function renderBudgetTable(){
+  const el=document.getElementById("budget-table");
+  const curKg=weightHistory.length?weightHistory[0].kg:77;
+  el.innerHTML=[60,65,68,70,72,74,77,80,83,85,90].map(w=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f9fafb">
+      <span style="font-size:12px;color:#6b7280">${w} kg</span>
+      <span style="font-size:12px;font-weight:700;color:${Math.abs(curKg-w)<0.5?"#db2777":"#374151"}">${calcBudget(w)} Pkt./Tag</span>
+      <span style="font-size:10px;color:#d1d5db">≈ ${Math.round(calcBudget(w)*33)} kcal</span>
+      ${Math.abs(curKg-w)<0.5?'<span style="font-size:10px;background:#fce7f3;color:#be185d;padding:2px 7px;border-radius:100px">Du</span>':""}
+    </div>`).join("");
+}
+
+// ═══════════════════════════════════════════════
+// MEASUREMENTS
+// ═══════════════════════════════════════════════
+function renderMeasInputs(){
+  document.getElementById("meas-inputs").innerHTML=MEAS.map(f=>`
+    <div>
+      <span class="inp-label" style="color:${f.c};font-weight:600">${f.l} (cm)</span>
+      <input type="number" id="m-${f.k}" placeholder="0" min="0" step="0.5">
+    </div>`).join("");
+  document.getElementById("m-date").value=new Date().toISOString().split("T")[0];
+}
+function saveMeasurements(){
+  const ds=document.getElementById("m-date").value;
+  const dateStr=ds?new Date(ds).toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"}):new Date().toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"});
+  const entry={date:dateStr};
+  let hasAny=false;
+  MEAS.forEach(f=>{const v=parseFloat(document.getElementById("m-"+f.k).value);if(!isNaN(v)&&v>0){entry[f.k]=v;hasAny=true;}});
+  if(!hasAny){alert("Bitte mindestens einen Wert eingeben.");return;}
+  measHistory=measHistory.filter(e=>e.date!==dateStr);
+  measHistory.unshift(entry);
+  if(measHistory.length>20)measHistory=measHistory.slice(0,20);
+  save("pp_measHistory",measHistory);
+  MEAS.forEach(f=>document.getElementById("m-"+f.k).value="");
+  const ok=document.getElementById("m-ok");ok.textContent="✅ Maße gespeichert!";ok.classList.remove("hidden");
+  setTimeout(()=>ok.classList.add("hidden"),3000);
+  renderMeasChart();renderMeasHistory();
+}
+function renderMeasHistory(){
+  const histEl=document.getElementById("m-hist-card"),emEl=document.getElementById("m-empty"),hEl=document.getElementById("m-hist");
+  if(!measHistory.length){histEl.style.display="none";emEl.style.display="block";return;}
+  histEl.style.display="block";emEl.style.display="none";
+  hEl.innerHTML=measHistory.slice(0,5).map((e,i)=>{
+    const prev=measHistory[i+1];
+    const badges=MEAS.filter(f=>e[f.k]).map(f=>{
+      const diff=prev&&prev[f.k]?(e[f.k]-prev[f.k]).toFixed(1):null;
+      const dc=diff!==null?(diff<0?"#065f46":diff>0?"#991b1b":"#9ca3af"):"";
+      const ds=diff!==null?` <span style="color:${dc}">${diff<0?"▼":diff>0?"▲":"="} ${Math.abs(diff)}</span>`:"";
+      return `<span class="mbadge" style="background:${f.c}15;border:1px solid ${f.c}30"><span style="color:${f.c};font-size:10px;font-weight:600">${f.l}:</span><span style="font-size:10px;font-weight:700;color:#374151;margin-left:3px">${e[f.k]} cm</span>${ds}</span>`;
+    }).join("");
+    return `<div class="mhrow"><div style="font-size:11px;font-weight:600;color:#6b7280;margin-bottom:5px">${e.date}</div><div style="display:flex;flex-wrap:wrap">${badges}</div></div>`;
+  }).join("");
+}
+
+// ═══════════════════════════════════════════════
+// CHARTS
+// ═══════════════════════════════════════════════
+function drawLine(canvas,data,color){
+  if(!canvas||data.length<2)return;
+  const ctx=canvas.getContext("2d"),W=canvas.offsetWidth||300,H=parseInt(canvas.getAttribute("height"))||120;
+  canvas.width=W*(window.devicePixelRatio||1);canvas.height=H*(window.devicePixelRatio||1);
+  ctx.scale(window.devicePixelRatio||1,window.devicePixelRatio||1);ctx.clearRect(0,0,W,H);
+  const vals=data.map(d=>d.v),minV=Math.min(...vals),maxV=Math.max(...vals),range=maxV-minV||1;
+  const p={t:14,r:8,b:26,l:36},cW=W-p.l-p.r,cH=H-p.t-p.b;
+  const tx=i=>p.l+(i/(data.length-1))*cW,ty=v=>p.t+cH-((v-minV)/range)*cH;
+  [0,0.5,1].forEach(r=>{const y=p.t+r*cH;ctx.strokeStyle="#f3f4f6";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(p.l+cW,y);ctx.stroke();ctx.fillStyle="#9ca3af";ctx.font="9px system-ui";ctx.textAlign="right";ctx.fillText((minV+(1-r)*range).toFixed(1),p.l-3,y+3);});
+  const step=Math.max(1,Math.floor((data.length-1)/4));
+  ctx.fillStyle="#9ca3af";ctx.font="9px system-ui";ctx.textAlign="center";
+  data.forEach((d,i)=>{if(i%step===0)ctx.fillText(d.l,tx(i),H-p.b+13);});
+  ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.beginPath();
+  data.forEach((d,i)=>i===0?ctx.moveTo(tx(i),ty(d.v)):ctx.lineTo(tx(i),ty(d.v)));ctx.stroke();
+  data.forEach((d,i)=>{ctx.fillStyle=color;ctx.beginPath();ctx.arc(tx(i),ty(d.v),3.5,0,Math.PI*2);ctx.fill();ctx.fillStyle=color;ctx.font="bold 9px system-ui";ctx.textAlign="center";ctx.fillText(d.v.toFixed(1),tx(i),ty(d.v)-8);});
+}
+
+function drawMulti(canvas,series){
+  if(!canvas)return;
+  const all=series.flatMap(s=>s.data.map(d=>d.v));if(all.length<2)return;
+  const ctx=canvas.getContext("2d"),W=canvas.offsetWidth||300,H=parseInt(canvas.getAttribute("height"))||150;
+  canvas.width=W*(window.devicePixelRatio||1);canvas.height=H*(window.devicePixelRatio||1);
+  ctx.scale(window.devicePixelRatio||1,window.devicePixelRatio||1);ctx.clearRect(0,0,W,H);
+  const labels=[...new Set(series.flatMap(s=>s.data.map(d=>d.l)))].sort();
+  const minV=Math.min(...all)*0.97,maxV=Math.max(...all)*1.03,range=maxV-minV||1;
+  const p={t:10,r:8,b:26,l:36},cW=W-p.l-p.r,cH=H-p.t-p.b;
+  const tx=i=>p.l+(i/Math.max(labels.length-1,1))*cW,ty=v=>p.t+cH-((v-minV)/range)*cH;
+  [0,0.5,1].forEach(r=>{const y=p.t+r*cH;ctx.strokeStyle="#f3f4f6";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(p.l+cW,y);ctx.stroke();ctx.fillStyle="#9ca3af";ctx.font="9px system-ui";ctx.textAlign="right";ctx.fillText((minV+(1-r)*range).toFixed(0),p.l-3,y+3);});
+  const step=Math.max(1,Math.floor((labels.length-1)/4));
+  ctx.fillStyle="#9ca3af";ctx.font="9px system-ui";ctx.textAlign="center";
+  labels.forEach((l,i)=>{if(i%step===0)ctx.fillText(l,tx(i),H-p.b+13);});
+  series.forEach(s=>{if(s.data.length<1)return;ctx.strokeStyle=s.color;ctx.lineWidth=2;ctx.beginPath();s.data.forEach((d,i)=>{const xi=labels.indexOf(d.l);i===0?ctx.moveTo(tx(xi),ty(d.v)):ctx.lineTo(tx(xi),ty(d.v));});ctx.stroke();s.data.forEach(d=>{const xi=labels.indexOf(d.l);ctx.fillStyle=s.color;ctx.beginPath();ctx.arc(tx(xi),ty(d.v),3,0,Math.PI*2);ctx.fill();});});
+}
+
+function renderWeightChart(){
+  const wrap=document.getElementById("w-chart-wrap");
+  if(weightHistory.length<2){wrap.classList.add("hidden");return;}
+  wrap.classList.remove("hidden");
+  const data=[...weightHistory].reverse().map(e=>({l:e.date.slice(0,5),v:e.kg}));
+  setTimeout(()=>drawLine(document.getElementById("w-chart"),data,"#ec4899"),50);
+}
+
+function renderMeasChart(){
+  const chartCard=document.getElementById("m-chart-card");
+  const series=MEAS.map(f=>({color:f.color,label:f.l,data:[...measHistory].reverse().filter(e=>e[f.k]).map(e=>({l:e.date.slice(0,5),v:e[f.k]}))}) ).filter(s=>s.data.length>0);
+  if(!series.length||series.every(s=>s.data.length<2)){chartCard.style.display="none";return;}
+  chartCard.style.display="block";
+  document.getElementById("m-legend").innerHTML=series.map(s=>`<div class="leg-item"><div class="leg-dot" style="background:${s.color}"></div>${s.label}</div>`).join("");
+  setTimeout(()=>drawMulti(document.getElementById("m-chart"),series),50);
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+renderCats();renderFoods();renderSportGrid();renderSportLog();
+renderWeightHistory();renderBudgetTable();renderMeasInputs();renderMeasHistory();
+updBudget();renderLog();
+window.addEventListener("resize",()=>{renderWeightChart();renderMeasChart();});
+</script>
+</body>
+</html>
