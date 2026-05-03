@@ -605,8 +605,8 @@ const FDB=[
 ["Feta 45%",250,14,0.5,13,0,30,"g","kaese"],
 ["Frischkäse light (1 EL)",140,9,3,7,0,15,"g","kaese"],
 ["Frischkäse 50% (1 EL)",200,8,3,12,0,15,"g","kaese"],
-["Gouda 30%",250,25,0,10,0,30,"g","kaese"],
-["Gouda 45-48%",320,24,0,15,0,30,"g","kaese"],
+["Gouda 30%",290,25,0,13,0,30,"g","kaese"],
+["Gouda 45-48%",348,25,0,17,0,33,"g","kaese"],
 ["Gorgonzola",360,20,0.1,18,0,30,"g","kaese"],
 ["Greyerzer 45%",330,28,0.1,16,0,30,"g","kaese"],
 ["Hüttenkäse (1 EL)",98,11,3.5,1.5,0,30,"g","kaese"],
@@ -758,13 +758,13 @@ const FDB=[
 ["Whey Shake mit Milch 0% (300ml)",176,30,7,1.5,0.5,300,"ml","whey"],
 ["Rinderbraten",185,25,0,6,0,100,"g","fleisch"],
 ["Chickenburger (1 Stück)",270,15,5,9,2,150,"g","auswarts"],
-["Fleischsalat (1 EL)",200,5,2,14,0.5,30,"g","salat"],
+["Fleischsalat (1 EL)",333,5,2,14,0.5,30,"g","salat"],
 ["Erbsensuppe (1 Portion)",95,5,3,2,4,250,"ml","auswarts"],
 ["Linsensuppe (1 Portion)",110,6,2,1.5,5,250,"ml","auswarts"],
 ["Kohlsuppe (1 Portion)",60,3,3,1,3,250,"ml","auswarts"],
 ["Kartoffelsuppe (1 Portion)",85,3,2,2,2,250,"ml","auswarts"],
 ["Salzstangen (10 Stück)",380,10,1.7,1,3.3,10,"g","suesses"],
-["Mentos Fruit (1 Rolle)",390,0,85,0.5,0,38,"g","suesses"],
+["Mentos Fruit (1 Rolle)",390,0,60,0.5,0,38,"g","suesses"],
 ["Salzbrezeln (5 Stück)",380,10,1.7,1,3.3,10,"g","suesses"],
 ["Mandelhörnchen (1 Stück)",430,9,28,10,3,50,"g","kekse"],
 ["Götterspeise ohne Zucker",5,1.5,0,0,0,125,"g","dessert"],
@@ -772,7 +772,7 @@ const FDB=[
 ["Honig-Waffeln (1 Stück)",450,5,36,11,1,30,"g","kekse"],
 ["Vollkornnudeln gekocht",124,5,0.5,0.5,3.5,200,"g","nudeln"],
 ["Kelloggs Smacks",380,6,36,1,1.5,30,"g","getreide"],
-["Knorr Bratensauce (zubereitet)",25,1,1.5,0.5,0.3,100,"ml","saucen"],
+["Knorr Bratensauce (zubereitet)",40,1,2,0.5,0.3,100,"ml","saucen"],
 ["Sauce Hollandaise (2 EL)",340,2,1,22,0,30,"ml","saucen"],
 ["Lachs geräuchert (2 Scheiben)",175,20,0,5,0,60,"g","fisch"],
 ["Griechischer Joghurt 2% (150g)",73,10,4,1.5,0,150,"g","milch"],
@@ -780,6 +780,19 @@ const FDB=[
 ["Philadelphia Classic (1 EL)",230,5,3,13,0,25,"g","kaese"],
 ["Philadelphia Kräuter (1 EL)",210,5,3,12,0,25,"g","kaese"],
 ["Philadelphia Protein (1 EL)",120,10,3,4,0,25,"g","kaese"],
+["Knorr Salatkrönung Gartenkräuter (10g)",300,5,5,2,2,10,"g","saucen"],
+["Knorr Salatkrönung (1 Portion 8g)",438,3,5,3,1,8,"g","saucen"],
+["Knorr Salatkrönung Küchenkräuter ohne Öl (9g)",167,5,8,0.5,3,9,"g","saucen"],
+["Knorr Salatkrönung Italienisch (1 Tüte 8g)",338,4,5,2,2,8,"g","saucen"],
+["Knorr Salatkrönung Küchenkräuter (30ml)",427,2,4,10,0.5,30,"ml","saucen"],
+["Knorr Salatkrönung Dill (30ml)",433,2,4,10,0.5,30,"ml","saucen"],
+["M&Ms Peanut (1 Portion 45g)",515,10,47,14,2,45,"g","suesses"],
+["M&Ms Peanut (kleine Tüte 36g)",515,10,47,14,2,36,"g","suesses"],
+["M&Ms Chocolate (1 Portion 45g)",488,4.5,63,10,1,45,"g","suesses"],
+["M&Ms Chocolate (kleine Tüte 36g)",488,4.5,63,10,1,36,"g","suesses"],
+["Hähnchen Grillfackeln Aldi (100g)",143,19,0.5,2,0,100,"g","geflugel"],
+["Grillfackeln Lidl (1 Portion 50g)",170,8,0.3,6,0,50,"g","fleisch"],
+["Spareribs BBQ (100g)",208,16,0.9,6,0,100,"g","fleisch"],
 ];
 
 const CATS=[
@@ -850,6 +863,7 @@ function load(k,d){try{const v=localStorage.getItem(k);return v!==null?JSON.pars
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
 
 let foodLog=load("pp_foodLog",[]);
+let pendingFood=null;
 let sportLog=load("pp_sportLog",[]);
 let sportPts=load("pp_sportPts",0);
 let weeklyUsed=load("pp_weeklyUsed",0);
@@ -993,16 +1007,26 @@ function confirmAdd(){
 // LOG
 // =======================================
 function addToLog(name,p,portion,kcal){
+  pendingFood={name,pts:p,portion,kcal:kcal||0};
+  document.getElementById("meal-modal").classList.add("show");
+}
+function confirmMeal(meal){
+  if(!pendingFood) return;
+  const mealLabels={fruehstueck:"🌅 Frühstück",mittag:"☀️ Mittagessen",abend:"🌙 Abendessen",snack:"🍎 Snack","":" "};
+  pendingFood.meal=meal;
+  pendingFood.mealLabel=mealLabels[meal]||"";
   const eb=budget+sportPts;
   const used=foodLog.reduce((s,e)=>s+e.pts,0);
   const rem=eb-used;
-  const ov=Math.max(0,p-rem);
+  const ov=Math.max(0,pendingFood.pts-rem);
   if(ov>0){weeklyUsed+=ov;save("pp_weeklyUsed",weeklyUsed);}
-  foodLog.push({name,pts:p,portion,kcal:kcal||0});
+  foodLog.push({...pendingFood});
   save("pp_foodLog",foodLog);
+  document.getElementById("meal-modal").classList.remove("show");
+  pendingFood=null;
   updBudget();renderLog();
   showTabByName("tagebuch");
-  showToast("✅ "+name+" hinzugefügt");
+  showToast("✅ Hinzugefügt!");
 }
 
 function showTabByName(name){
@@ -1046,17 +1070,39 @@ function renderLog(){
   const total=document.getElementById("log-total");
   if(!foodLog.length){empty.style.display="block";items.innerHTML="";total.classList.add("hidden");return;}
   empty.style.display="none";
-  items.innerHTML=foodLog.map((e,i)=>`
-    <div class="lrow" onclick="askDel(${i})">
-      <div style="flex:1;min-width:0;padding-right:8px">
-        <div style="font-size:12px;color:#4b5563;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.name}</div>
-        <div style="font-size:10px;color:#d1d5db">${e.portion||""}${e.kcal?" · "+e.kcal+" kcal":""}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:7px;flex-shrink:0">
-        <span style="font-size:12px;font-weight:700;color:#1e40af">${e.pts} Pkt.</span>
-        <span style="font-size:11px;color:#fca5a5">✕</span>
-      </div>
-    </div>`).join("");
+  // Group by meal
+  const MEALS=[
+    {key:"fruehstueck",label:"🌅 Frühstück",bg:"#fef9c3",border:"#fde047",col:"#854d0e"},
+    {key:"mittag",label:"☀️ Mittagessen",bg:"#dcfce7",border:"#86efac",col:"#166534"},
+    {key:"abend",label:"🌙 Abendessen",bg:"#dbeafe",border:"#93c5fd",col:"#1e40af"},
+    {key:"snack",label:"🍎 Snack",bg:"#f3f4f6",border:"#d1d5db",col:"#374151"},
+    {key:"",label:"Sonstige",bg:"#f9fafb",border:"#e5e7eb",col:"#6b7280"},
+  ];
+  let html2="";
+  MEALS.forEach(m=>{
+    const mi=foodLog.map((e,i)=>({...e,i})).filter(e=>(e.meal||"")===m.key);
+    if(!mi.length)return;
+    const mPts=mi.reduce((s,e)=>s+e.pts,0);
+    const mKcal=mi.reduce((s,e)=>s+(e.kcal||0),0);
+    html2+='<div style="margin-bottom:8px">';
+    html2+='<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;border-radius:8px;background:'+m.bg+';border:1px solid '+m.border+';margin-bottom:4px">';
+    html2+='<span style="font-size:11px;font-weight:700;color:'+m.col+'">'+m.label+'</span>';
+    html2+='<span style="font-size:10px;color:'+m.col+'">'+mPts+' Pkt. · '+mKcal+' kcal</span>';
+    html2+='</div>';
+    mi.forEach(e=>{
+      html2+='<div class="lrow" onclick="askDel('+e.i+')">';
+      html2+='<div style="flex:1;min-width:0;padding-right:8px">';
+      html2+='<div style="font-size:12px;color:#4b5563;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.name+'</div>';
+      html2+='<div style="font-size:11px;color:#6b7280;margin-top:1px">'+e.portion+(e.kcal?' · '+e.kcal+' kcal':'')+'</div>';
+      html2+='</div>';
+      html2+='<div style="display:flex;align-items:center;gap:7px;flex-shrink:0">';
+      html2+='<span style="font-size:12px;font-weight:700;color:#1e40af">'+e.pts+' Pkt.</span>';
+      html2+='<span style="font-size:11px;color:#fca5a5">✕</span>';
+      html2+='</div></div>';
+    });
+    html2+='</div>';
+  });
+  items.innerHTML=html2;
   total.classList.remove("hidden");
   const tv=document.getElementById("log-total-pts");
   tv.textContent=used+" / "+eb+" Pkt.";
@@ -1331,5 +1377,19 @@ buildMeasInputs();renderMeasHist();
 updBudget();renderLog();
 window.addEventListener("resize",()=>{renderWChart();renderMChart();});
 </script>
+
+<!-- MODAL: Mahlzeit auswählen -->
+<div class="modal-bg" id="meal-modal">
+  <div class="modal">
+    <div style="font-size:14px;font-weight:700;color:#374151;text-align:center;margin-bottom:16px">Wann gegessen?</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px">
+      <button onclick="confirmMeal('fruehstueck')" style="padding:14px;border-radius:14px;background:#fef9c3;border:1.5px solid #fde047;font-size:13px;font-weight:700;color:#854d0e;cursor:pointer">🌅 Frühstück</button>
+      <button onclick="confirmMeal('mittag')" style="padding:14px;border-radius:14px;background:#dcfce7;border:1.5px solid #86efac;font-size:13px;font-weight:700;color:#166534;cursor:pointer">☀️ Mittagessen</button>
+      <button onclick="confirmMeal('abend')" style="padding:14px;border-radius:14px;background:#dbeafe;border:1.5px solid #93c5fd;font-size:13px;font-weight:700;color:#1e40af;cursor:pointer">🌙 Abendessen</button>
+      <button onclick="confirmMeal('snack')" style="padding:14px;border-radius:14px;background:#f3f4f6;border:1.5px solid #d1d5db;font-size:13px;font-weight:700;color:#374151;cursor:pointer">🍎 Snack</button>
+    </div>
+    <button class="mcl" onclick="confirmMeal('snack')" style="width:100%;margin-top:4px">Ohne Kategorie</button>
+  </div>
+</div>
 </body>
 </html>
