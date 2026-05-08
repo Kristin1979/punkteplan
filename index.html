@@ -69,7 +69,6 @@ input:focus,select:focus{border-color:#93c5fd}
 .mhrow{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #f9fafb}
 .mhrow:last-child{border-bottom:none}
 .mbadge{display:inline-flex;align-items:center;gap:4px;border-radius:8px;padding:3px 8px;margin:2px}
-/* Delete toast */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1f2937;color:white;padding:10px 18px;border-radius:100px;font-size:12px;font-weight:600;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
 </style>
@@ -214,7 +213,6 @@ input:focus,select:focus{border-color:#93c5fd}
         <span style="font-size:13px;font-weight:700;color:#374151">📋 Tagebuch</span>
         <button onclick="resetLog()" style="font-size:11px;color:#d1d5db;background:none;border:none;cursor:pointer">Zurücksetzen</button>
       </div>
-      <!-- Day selector -->
       <div style="display:flex;gap:5px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;scrollbar-width:none" id="day-tabs"></div>
       <div id="log-empty" style="text-align:center;padding:24px;font-size:12px;color:#d1d5db">Noch nichts eingetragen.<br>Wähle aus der Lebensmittelliste!</div>
       <div id="log-items"></div>
@@ -274,16 +272,10 @@ input:focus,select:focus{border-color:#93c5fd}
 <div class="toast" id="toast"></div>
 
 <script>
-// =======================================
-// LEBENSMITTELDATENBANK
-// Format: [name, kcal/100g, protein, sugar, satFat, fiber, defaultG, unit, category]
-// =======================================
 const FDB=[
-// ⭐ MEINE
 ["Belegtes Baguette (Pute,Gurke,Käse)",100,5.8,0.7,2.1,0.4,838,"Portion","meine"],
 ["Kartoffelsalat mit Mayo & Gurke",140,2.25,1.5,2.75,1.5,200,"g","meine"],
 ["Spaghetti Bolognese Maggi (1 Portion)",151,6.9,5,1.5,2,353,"g","meine"],
-// 🍞 BROT & BRÖTCHEN
 ["Baguettebrot",280,9,2,0.5,2,25,"g","brot"],
 ["Baguettebrötchen",280,9,2,0.5,2,90,"g","brot"],
 ["Brot jede Sorte (1 Scheibe)",215,7,2,0.8,4,50,"g","brot"],
@@ -302,7 +294,6 @@ const FDB=[
 ["Zwieback (1 Stück)",400,9,12,2,1,10,"g","brot"],
 ["Fladenbrot (1 Ecke)",255,8,1,0.5,2,60,"g","brot"],
 ["Rosinenbrot (1 Scheibe)",280,7,14,1,2,40,"g","brot"],
-// 🧈 BROTAUFSTRICHE
 ["Erdnusscreme (1 TL)",600,25,5,8,6,5,"g","aufstrich"],
 ["Fruchtaufstrich (3 TL)",250,0.5,55,0.1,0.5,15,"g","aufstrich"],
 ["Honig (1 TL)",304,0.3,76,0,0,5,"g","aufstrich"],
@@ -312,7 +303,6 @@ const FDB=[
 ["Nuss-Nougatcreme/Nutella (1 TL)",530,6,56,11,0,5,"g","aufstrich"],
 ["Pflaumenmus (1 TL)",220,0.5,48,0,2,5,"g","aufstrich"],
 ["Zuckerrübenkraut (2 TL)",240,0.5,55,0,0,10,"g","aufstrich"],
-// 🍮 DESSERTS & SÜSSSPEISEN
 ["Crème Brûlée",280,4,18,12,0,125,"g","dessert"],
 ["Crêpe pur (1 Stück)",220,6,5,6,1,70,"g","dessert"],
 ["Dampfnudel (1 Stück)",230,6,10,4,1,50,"g","dessert"],
@@ -325,7 +315,6 @@ const FDB=[
 ["Tiramisu",330,6,22,14,0.5,150,"g","dessert"],
 ["Vanillepudding",150,4,16,3,0,125,"g","dessert"],
 ["Weincreme",280,3,24,10,0,125,"g","dessert"],
-// 🍫 SÜSSES, EIS & SNACKS
 ["Bananenspieß mit Schokolade (1 Stück)",250,3,30,8,2,80,"g","suesses"],
 ["Dominostein (1 Stück)",380,3.5,60,5,2,20,"g","suesses"],
 ["Eiscreme (1 Kugel 50g)",200,3.5,18,7,0,50,"g","suesses"],
@@ -367,7 +356,6 @@ const FDB=[
 ["Twix Riegel (50g)",498,4.5,45,12,1,50,"g","suesses"],
 ["Wassereis am Stiel",60,0,14,0,0,110,"ml","suesses"],
 ["Chips",523,6.7,1,8.3,3.3,30,"g","suesses"],
-// 🍪 KEKSE & KUCHEN
 ["Apfelkuchen Mürbeteig (1 Stück)",300,4,18,10,2,100,"g","kekse"],
 ["Baiser (1 Stück)",380,3,90,0,0,20,"g","kekse"],
 ["Berliner/Krapfen (1 Stück)",320,5,14,12,1,90,"g","kekse"],
@@ -390,14 +378,12 @@ const FDB=[
 ["Waffel frisch (1 Stück)",280,6,12,9,1.5,80,"g","kekse"],
 ["Waffelröllchen (3 Stück)",500,6,26,16,1,18,"g","kekse"],
 ["Zimtsterne (2 Stück)",430,8,30,9,2.5,20,"g","kekse"],
-// 🥞 PFANNKUCHEN & CRÊPES
 ["Pfannkuchen pur (1 Stück)",185,6,3,6,1,80,"g","pfannkuchen"],
 ["Pfannkuchen mit Marmelade",210,6,14,6,1,100,"g","pfannkuchen"],
 ["Pfannkuchen mit Nutella",250,7,18,9,1.5,110,"g","pfannkuchen"],
 ["Crêpe pur (1 Stück)",145,5,3,4,0.5,60,"g","pfannkuchen"],
 ["Crêpe mit Zitrone & Zucker",175,5,16,4,0.5,80,"g","pfannkuchen"],
 ["Crêpe Suzette (Orangensauce)",220,5,22,5,0.5,100,"g","pfannkuchen"],
-// 🍯 ZUCKER & AUFSTRICHE
 ["Zucker (1 TL)",400,0,99,0,0,3,"g","zucker"],
 ["Zucker (1 EL)",400,0,99,0,0,15,"g","zucker"],
 ["Puderzucker (1 TL)",395,0,98,0,0,3,"g","zucker"],
@@ -407,7 +393,6 @@ const FDB=[
 ["Marmelade/Konfitüre (1 EL)",250,0.5,55,0.1,0.5,20,"g","zucker"],
 ["Nutella (1 EL)",530,6,56,11,0,15,"g","zucker"],
 ["Karamellsauce (1 EL)",340,2,58,8,0,20,"g","zucker"],
-// 🌰 NÜSSE & SAMEN
 ["Cashewnüsse (5 Stück)",570,18,6,9,3,5,"g","nuesse"],
 ["Erdnüsse geröstet (1 EL)",580,26,4,8,8,10,"g","nuesse"],
 ["Erdnussflips (1 Hand)",500,10,2,15,3,6,"g","nuesse"],
@@ -423,7 +408,6 @@ const FDB=[
 ["Sesam (1 TL)",580,18,0.5,8,12,5,"g","nuesse"],
 ["Sonnenblumenkerne (1 EL)",580,21,2,9,7,10,"g","nuesse"],
 ["Walnüsse (1 Stück)",660,15,2.7,6,6.7,5,"g","nuesse"],
-// 🍝 NUDELN & CO.
 ["Glasnudeln verzehrfertig (1 Tasse)",115,0.5,0.5,0.2,0.5,120,"g","nudeln"],
 ["Gnocchi Fertigprodukt",170,3.5,2,0.8,1.5,125,"g","nudeln"],
 ["Maultaschen (1 Stück)",200,9,3,5,1,50,"g","nudeln"],
@@ -433,7 +417,6 @@ const FDB=[
 ["Spätzle verzehrfertig",170,6,1,2,1,150,"g","nudeln"],
 ["Tortellini verzehrfertig (1 Tasse)",180,9,2.5,3.5,1.5,200,"g","nudeln"],
 ["Spaghetti/Pasta gekocht",117,4,0.7,0.3,1.3,200,"g","nudeln"],
-// 🌾 GETREIDE & GETREIDEPRODUKTE
 ["Bulgur trocken (1 EL)",340,13,1,1,12,20,"g","getreide"],
 ["Cornflakes (1 Tasse)",370,7,8,0.5,3,30,"g","getreide"],
 ["Couscous trocken (1 EL)",360,13,1,0.5,5,20,"g","getreide"],
@@ -445,7 +428,6 @@ const FDB=[
 ["Reis verzehrfertig",130,2.5,0,0.2,0.5,150,"g","getreide"],
 ["Reiswaffel (1 Stück)",380,7,1,1,2,8,"g","getreide"],
 ["Kartoffeln gekocht",80,2,0.7,0.1,1.7,150,"g","getreide"],
-// 🥔 KARTOFFELN
 ["Bratkartoffeln",220,4,1,6,3,200,"g","kartoffel"],
 ["Kartoffelklöße (1 Stück)",130,3,1,0.5,2,90,"g","kartoffel"],
 ["Kartoffelpüree",130,3,2,3,2,150,"g","kartoffel"],
@@ -453,7 +435,6 @@ const FDB=[
 ["Pommes frites",380,5,1,8,3,150,"g","kartoffel"],
 ["Rösti (1 Stück)",150,2,1,5,2,60,"g","kartoffel"],
 ["Süßkartoffel",90,2,5,0.1,3,150,"g","kartoffel"],
-// 🍕 PIZZA & AUSWÄRTS
 ["Baguette mit Salami (1 Portion)",350,14,3,12,2,180,"g","auswarts"],
 ["Baguette mit Schinken (1 Portion)",290,16,3,8,2,180,"g","auswarts"],
 ["Blattsalat mit Putenstreifen",220,22,4,6,3,300,"g","auswarts"],
@@ -468,7 +449,6 @@ const FDB=[
 ["Pommes mit Ketchup",380,5,6,8,3,200,"g","auswarts"],
 ["Toast Hawaii",280,15,8,10,1,150,"g","auswarts"],
 ["Tomatensuppe (1 Portion)",90,3,8,2,2,250,"ml","auswarts"],
-// 🥗 SALATE
 ["Fleischsalat mit Mayo (1 EL)",180,5,2,12,0.5,30,"g","salat"],
 ["Gemischter Salat mit Essig & Öl",30,1,1.5,0.5,1.25,200,"g","salat"],
 ["Geflügelsalat mit Mayo (1 EL)",150,8,1,9,0,30,"g","salat"],
@@ -481,7 +461,6 @@ const FDB=[
 ["Tomatensalat mit Essig & Öl",37,1,2.7,0.3,1,150,"g","salat"],
 ["Waldorfsalat mit Mayo (1 EL)",130,2,2,9,1,30,"g","salat"],
 ["Wurstsalat (1 EL)",120,6,0.5,8,0,30,"g","salat"],
-// 🫙 SAUCEN, DRESSINGS & FIX
 ["Béchamelsauce (1 EL)",80,1.5,1.5,4,0.3,20,"ml","saucen"],
 ["Bratensauce (1 EL)",30,1,1.5,0.5,0.3,20,"ml","saucen"],
 ["Cocktail-Dressing (1 EL)",250,1,8,14,0,15,"ml","saucen"],
@@ -502,7 +481,6 @@ const FDB=[
 ["Senf (1 TL)",100,8,2,2,6,5,"g","saucen"],
 ["Tomatensauce (2 EL)",50,2,6,0.5,1.5,40,"ml","saucen"],
 ["Vinaigrette Essig & Öl (1 EL)",280,0.3,1,20,0,15,"ml","saucen"],
-// 🧂 WÜRZMITTEL & ZUTATEN
 ["Bouillon/Brühe Instant (1 TL)",200,15,2,5,0,5,"g","wuerz"],
 ["Kakaopulver entölt (1 TL)",220,20,5,5,30,3,"g","wuerz"],
 ["Kapern",16,2,0,0.5,3,15,"g","wuerz"],
@@ -514,7 +492,6 @@ const FDB=[
 ["Tabasco (1 TL)",35,1,2,0.5,1,5,"ml","wuerz"],
 ["Tomatenmark (1 EL)",80,4,8,0.5,3,15,"g","wuerz"],
 ["Worcestersauce (1 TL)",80,3,15,0,0.5,5,"ml","wuerz"],
-// 🌿 VEGETARISCHE PRODUKTE & EI
 ["Ei gekocht (1 Stück)",156,12,0.4,3.2,0,60,"g","vegprod"],
 ["Spiegelei (1 Stück in Butter)",140,9,0.3,5.5,0,55,"g","vegprod"],
 ["Rührei (2 Eier mit Butter)",220,16,0.5,9,0,120,"g","vegprod"],
@@ -527,7 +504,6 @@ const FDB=[
 ["Soja-Joghurt mit Frucht",90,3.5,12,1.5,0.5,125,"g","vegprod"],
 ["Tofu natur",120,12,0.5,5,1,100,"g","vegprod"],
 ["Vegetarische Tofubratlinge (1 Stück)",200,12,4,7,4,100,"g","vegprod"],
-// 🍗 GEFLÜGEL & GEFLÜGELPRODUKTE
 ["Brathähnchen mit Haut (½ Stück)",250,25,0,12,0,185,"g","geflugel"],
 ["Brathähnchen ohne Haut (½ Stück)",200,28,0,6,0,140,"g","geflugel"],
 ["Entenbrust ohne Haut",160,26,0,4,0,150,"g","geflugel"],
@@ -549,7 +525,7 @@ const FDB=[
 ["Putenbrustaufschnitt geräuchert (2 Scheiben)",105,21,0.5,1.5,0,30,"g","geflugel"],
 ["Putenbrust gekocht",107,24,0,0.2,0,100,"g","geflugel"],
 ["Suppenhuhn mit Knochen",200,18,0,10,0,150,"g","geflugel"],
-// 🥩 FLEISCH & WURST
+["Hähnchen Grillfackeln Aldi (100g)",143,19,0.5,2,0,100,"g","geflugel"],
 ["Bauchspeck (1 Scheibe)",450,12,0,25,0,10,"g","fleisch"],
 ["Bierschinken",150,14,2,5,0,50,"g","fleisch"],
 ["Bockwurst (1 Stück)",280,12,1,13,0,65,"g","fleisch"],
@@ -581,7 +557,11 @@ const FDB=[
 ["Schweineschnitzel",165,22,0,5,0,150,"g","fleisch"],
 ["Weißwurst (1 Stück)",270,12,1,14,0,60,"g","fleisch"],
 ["Wiener Würstchen (1 Stück)",260,12,1,12,0,70,"g","fleisch"],
-// 🐟 FISCH
+["Rinderbraten",185,25,0,6,0,100,"g","fleisch"],
+["Grillfackeln Lidl (1 Portion 50g)",170,8,0.3,6,0,50,"g","fleisch"],
+["Spareribs BBQ (100g)",208,16,0.9,6,0,100,"g","fleisch"],
+// NEU: Kalbsfleisch
+["Kalbsfleisch (150g Portion)",118,22,0,1.2,0,150,"g","fleisch"],
 ["Bismarckhering mariniert",200,16,3,8,0,110,"g","fisch"],
 ["Forelle frisch",130,20,0,3,0,150,"g","fisch"],
 ["Garnelen",85,18,0,0.2,0,100,"g","fisch"],
@@ -595,7 +575,9 @@ const FDB=[
 ["Rollmops",170,13,2,7,0,80,"g","fisch"],
 ["Sardinen in Öl (1 EL)",100,7,0,6,0,30,"g","fisch"],
 ["Thunfisch in Wasser",100,23,0,0.5,0,100,"g","fisch"],
-// 🧀 KÄSE
+["Shrimps Fischerstolz Lidl",88,18,0,0.3,0,100,"g","fisch"],
+["Scampi",51,1,2,1,0,100,"g","fisch"],
+["Lachs geräuchert (2 Scheiben)",175,20,0,5,0,60,"g","fisch"],
 ["Appenzeller 50%",350,24,0.5,18,0,30,"g","kaese"],
 ["Brie",300,16,0.1,13,0,30,"g","kaese"],
 ["Butterkäse 50%",350,22,0.1,17,0,30,"g","kaese"],
@@ -622,7 +604,9 @@ const FDB=[
 ["Schafskäse/Feta 45%",250,14,0.5,13,0,30,"g","kaese"],
 ["Schmelzkäse (1 EL)",160,10,3,7,0,25,"g","kaese"],
 ["Tilsiter 45%",300,24,0.1,15,0,30,"g","kaese"],
-// 🥛 MILCH & MILCHPRODUKTE
+["Philadelphia Classic (1 EL)",230,5,3,13,0,25,"g","kaese"],
+["Philadelphia Kräuter (1 EL)",210,5,3,12,0,25,"g","kaese"],
+["Philadelphia Protein (1 EL)",120,10,3,4,0,25,"g","kaese"],
 ["Buttermilch (250ml)",100,8,10,0.5,0,250,"ml","milch"],
 ["Crème fraîche 30% (1 TL)",310,2,3,20,0,5,"g","milch"],
 ["Dickmilch 3,5% (250ml)",155,8,10,5,0,250,"ml","milch"],
@@ -644,7 +628,8 @@ const FDB=[
 ["Speisequark 0,2% (75g)",72,12,3.5,0.1,0,75,"g","milch"],
 ["Speisequark 20% (75g)",110,10,3,5,0,75,"g","milch"],
 ["Sprühsahne kalorienreduziert (1 EL)",100,3,4,6,0,8,"g","milch"],
-// 🥦 GEMÜSE & HÜLSENFRÜCHTE
+["Griechischer Joghurt 2% (150g)",73,10,4,1.5,0,150,"g","milch"],
+["Griechischer Joghurt 10% (150g)",133,9,4,7,0,150,"g","milch"],
 ["Artischocken",47,3,3,0.2,5,100,"g","gemuese"],
 ["Auberginen",25,1,3,0.2,3,100,"g","gemuese"],
 ["Blattsalat jede Sorte",15,1.5,1.5,0.2,2,100,"g","gemuese"],
@@ -680,7 +665,10 @@ const FDB=[
 ["Zuckererbsenschoten (1 Hand)",42,3,4,0.3,3,50,"g","gemuese"],
 ["Zwiebeln",40,1.5,7,0.2,1.5,100,"g","gemuese"],
 ["Kichererbsen verzehrfertig",164,9,0,2.6,8,100,"g","gemuese"],
-// 🍓 OBST & OBSTPRODUKTE
+["Eisbergsalat",13,1.2,1.5,0.1,1.2,100,"g","gemuese"],
+["Kopfsalat",14,1.3,1.5,0.2,1.3,100,"g","gemuese"],
+["Lollo Rosso",16,1.4,1.5,0.2,1.5,100,"g","gemuese"],
+["Gewürzgurken Kühne (1 Gurke)",15,0.5,2,0.1,0.5,40,"g","gemuese"],
 ["Ananas",50,0.5,10,0.1,1.5,100,"g","obst"],
 ["Apfel",52,0.3,10,0.1,2,150,"g","obst"],
 ["Aprikose",48,1,9,0.1,2,100,"g","obst"],
@@ -704,7 +692,6 @@ const FDB=[
 ["Rosinen (2 EL)",299,2.5,62,0.5,4,14,"g","obst"],
 ["Wassermelone",30,0.6,6,0.1,0.4,150,"g","obst"],
 ["Weintrauben (1 Hand)",70,0.7,14,0.2,1,100,"g","obst"],
-// 🥤 GETRÄNKE
 ["Alkoholfreies Bier (250ml)",80,0.8,5,0,0,250,"ml","trinken"],
 ["Apfelwein/Cidre (200ml)",100,0.3,8,0,0,200,"ml","trinken"],
 ["Apfelsaftschorle (200ml)",55,0.2,11,0,0,200,"ml","trinken"],
@@ -732,13 +719,11 @@ const FDB=[
 ["Wein weiß trocken (125ml)",83,0.1,0.8,0,0,125,"ml","trinken"],
 ["Weinschorle (200ml)",85,0.1,5,0,0,200,"ml","trinken"],
 ["Whisky (20ml)",220,0,0,0,0,20,"ml","trinken"],
-// 🥑 FETTE & ÖLE
 ["Avocado (halbe)",160,2,0.6,2.1,6.4,70,"g","fette"],
 ["Butter (1 TL)",740,0.7,0.6,48,0,5,"g","fette"],
 ["Olivenöl (1 TL)",884,0,0,14,0,5,"g","fette"],
 ["Pflanzenmargarine (1 TL)",500,0.5,0.5,15,0,5,"g","fette"],
 ["Schlagsahne (1 EL)",280,2,3,22,0,15,"ml","fette"],
-// 🏪 LIDL BACKSHOP
 ["Laugenbrezel Lidl (1 Stück)",300,8,2,2.5,2,85,"g","lidl"],
 ["Laugenstange (1 Stück)",280,8,1.5,2,1.5,75,"g","lidl"],
 ["Croissant Lidl (1 Stück)",406,7,5,13,1.5,65,"g","lidl"],
@@ -752,15 +737,12 @@ const FDB=[
 ["Zimtschnecke (1 Stück)",390,6,22,10,1.5,90,"g","lidl"],
 ["Blätterteigschnecke Käse (1 Stück)",370,10,2.5,14,1,80,"g","lidl"],
 ["Brezeldip/Obatzda (30g)",280,10,1,14,0,30,"g","lidl"],
-// 💪 WHEY PROTEIN
 ["NZ Whey Protein Vanille (30g)",400,77,5,4,1,30,"g","whey"],
 ["NZ Whey Protein Schoko (30g)",390,75,6,4,2,30,"g","whey"],
 ["NZ Whey Protein Neutral (30g)",395,80,3,3,0.5,30,"g","whey"],
 ["Whey Shake mit Wasser (300ml)",120,24,2,1.5,0.5,300,"ml","whey"],
 ["Whey Shake mit Milch 0% (300ml)",176,30,7,1.5,0.5,300,"ml","whey"],
-["Rinderbraten",185,25,0,6,0,100,"g","fleisch"],
 ["Chickenburger (1 Stück)",270,15,5,9,2,150,"g","auswarts"],
-["Fleischsalat (1 EL)",333,5,2,14,0.5,30,"g","salat"],
 ["Erbsensuppe (1 Portion)",95,5,3,2,4,250,"ml","auswarts"],
 ["Linsensuppe (1 Portion)",110,6,2,1.5,5,250,"ml","auswarts"],
 ["Kohlsuppe (1 Portion)",60,3,3,1,3,250,"ml","auswarts"],
@@ -768,6 +750,11 @@ const FDB=[
 ["Salzstangen (10 Stück)",380,10,1.7,1,3.3,10,"g","suesses"],
 ["Mentos Fruit (1 Rolle)",390,0,60,0.5,0,38,"g","suesses"],
 ["Salzbrezeln (5 Stück)",380,10,1.7,1,3.3,10,"g","suesses"],
+["Spaghettieis (1 Portion 200g)",185,3,20,7,0.5,200,"g","suesses"],
+["M&Ms Peanut (1 Portion 45g)",515,10,47,14,2,45,"g","suesses"],
+["M&Ms Peanut (kleine Tüte 36g)",515,10,47,14,2,36,"g","suesses"],
+["M&Ms Chocolate (1 Portion 45g)",488,4.5,63,10,1,45,"g","suesses"],
+["M&Ms Chocolate (kleine Tüte 36g)",488,4.5,63,10,1,36,"g","suesses"],
 ["Mandelhörnchen (1 Stück)",430,9,28,10,3,50,"g","kekse"],
 ["Götterspeise ohne Zucker",5,1.5,0,0,0,125,"g","dessert"],
 ["Karamell-Waffeln (1 Stück)",460,5,38,12,1,30,"g","kekse"],
@@ -776,38 +763,19 @@ const FDB=[
 ["Kelloggs Smacks",380,6,36,1,1.5,30,"g","getreide"],
 ["Knorr Bratensauce (zubereitet)",40,1,2,0.5,0.3,100,"ml","saucen"],
 ["Sauce Hollandaise (2 EL)",340,2,1,22,0,30,"ml","saucen"],
-["Lachs geräuchert (2 Scheiben)",175,20,0,5,0,60,"g","fisch"],
-["Griechischer Joghurt 2% (150g)",73,10,4,1.5,0,150,"g","milch"],
-["Griechischer Joghurt 10% (150g)",133,9,4,7,0,150,"g","milch"],
-["Philadelphia Classic (1 EL)",230,5,3,13,0,25,"g","kaese"],
-["Philadelphia Kräuter (1 EL)",210,5,3,12,0,25,"g","kaese"],
-["Philadelphia Protein (1 EL)",120,10,3,4,0,25,"g","kaese"],
 ["Knorr Salatkrönung Gartenkräuter (10g)",300,5,5,2,2,10,"g","saucen"],
 ["Knorr Salatkrönung (1 Portion 8g)",438,3,5,3,1,8,"g","saucen"],
 ["Knorr Salatkrönung Küchenkräuter ohne Öl (9g)",167,5,8,0.5,3,9,"g","saucen"],
 ["Knorr Salatkrönung Italienisch (1 Tüte 8g)",338,4,5,2,2,8,"g","saucen"],
 ["Knorr Salatkrönung Küchenkräuter (30ml)",427,2,4,10,0.5,30,"ml","saucen"],
 ["Knorr Salatkrönung Dill (30ml)",433,2,4,10,0.5,30,"ml","saucen"],
-["M&Ms Peanut (1 Portion 45g)",515,10,47,14,2,45,"g","suesses"],
-["M&Ms Peanut (kleine Tüte 36g)",515,10,47,14,2,36,"g","suesses"],
-["M&Ms Chocolate (1 Portion 45g)",488,4.5,63,10,1,45,"g","suesses"],
-["M&Ms Chocolate (kleine Tüte 36g)",488,4.5,63,10,1,36,"g","suesses"],
-["Hähnchen Grillfackeln Aldi (100g)",143,19,0.5,2,0,100,"g","geflugel"],
-["Grillfackeln Lidl (1 Portion 50g)",170,8,0.3,6,0,50,"g","fleisch"],
-["Spareribs BBQ (100g)",208,16,0.9,6,0,100,"g","fleisch"],
-["Eisbergsalat",13,1.2,1.5,0.1,1.2,100,"g","gemuese"],
-["Kopfsalat",14,1.3,1.5,0.2,1.3,100,"g","gemuese"],
-["Lollo Rosso",16,1.4,1.5,0.2,1.5,100,"g","gemuese"],
-["Gewürzgurken Kühne (1 Gurke)",15,0.5,2,0.1,0.5,40,"g","gemuese"],
 ["Gemischter Salat (1 Schüssel 500g)",36,2,2,0.5,2,500,"g","salat"],
 ["Gemischter Salat mit Dressing (100g)",200,2,3,10,1,100,"g","salat"],
 ["Gemischter Salat Eisberg,Gurke,Paprika,Tomate (200g)",109,3,4,1,2,200,"g","salat"],
 ["Gemischter Salat Rewe (1 Schüssel 195g)",96,2.5,3,1,2,195,"g","salat"],
 ["Gemischter Salat mit Hähnchen (1 Tasse 450g)",57,6.2,0.9,0.7,0.7,450,"g","salat"],
 ["Gemischter Salat mit Feta (1 Portion 200g)",100,4,1.5,3,1,200,"g","salat"],
-["Spaghettieis (1 Portion 200g)",185,3,20,7,0.5,200,"g","suesses"],
-["Shrimps Fischerstolz Lidl",88,18,0,0.3,0,100,"g","fisch"],
-["Scampi",51,1,2,1,0,100,"g","fisch"],
+["Fleischsalat (1 EL)",333,5,2,14,0.5,30,"g","salat"],
 ];
 
 const CATS=[
@@ -850,10 +818,6 @@ const MEAS=[
 
 const WEEKLY=21;
 
-// =======================================
-// PUNKTE BERECHNUNG
-// Neue Regel: mindestens kcal÷33 Punkte
-// =======================================
 function calcPts(kcal,p,s,sf,f,g){
   const r=g/100;
   const k=kcal*r,pr=p*r,sr=s*r,sfr=sf*r,fr=f*r;
@@ -861,9 +825,7 @@ function calcPts(kcal,p,s,sf,f,g){
   const minPts=Math.round(k/33);
   return Math.max(0,Math.max(formula,minPts));
 }
-function calcPtsPortion(food,g){
-  return calcPts(food[1],food[2],food[3],food[4],food[5],g);
-}
+function calcPtsPortion(food,g){return calcPts(food[1],food[2],food[3],food[4],food[5],g);}
 function calcKcal(food,g){return Math.round(food[1]*g/100);}
 function ptsCol(p){return p===0?"#16a34a":p<=3?"#1e40af":p<=7?"#d97706":"#dc2626";}
 function calcBudget(kg){
@@ -871,9 +833,6 @@ function calcBudget(kg){
   return Math.min(50,Math.max(22,Math.round((bmr*1.2-400)/33)));
 }
 
-// =======================================
-// STATE
-// =======================================
 function load(k,d){try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):d;}catch{return d;}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
 
@@ -888,9 +847,7 @@ let measHistory=load("pp_measHistory",[]);
 let curSearch="",curCat="",selFood=null,delIdx=null;
 
 const today=new Date().toDateString();
-// Save today's log before reset
 if(load("pp_logDate","")!==today && load("pp_logDate","")!==""){
-  // Archive yesterday's log
   const lastDate=load("pp_logDate","");
   const lastLog=load("pp_foodLog",[]);
   const lastSport=load("pp_sportLog",[]);
@@ -898,7 +855,7 @@ if(load("pp_logDate","")!==today && load("pp_logDate","")!==""){
   if(lastLog.length>0){
     let history=load("pp_history",[]);
     history.unshift({date:lastDate,foodLog:lastLog,sportLog:lastSport,sportPts:lastSportPts,budget:budget});
-    if(history.length>7) history=history.slice(0,7);
+    if(history.length>7)history=history.slice(0,7);
     save("pp_history",history);
   }
 }
@@ -907,28 +864,18 @@ if(load("pp_logDate","")!==today){
   save("pp_foodLog",[]);save("pp_sportLog",[]);save("pp_sportPts",0);
   save("pp_logDate",today);
 }
-// Weekly reset of weeklyUsed - reset on Monday
 const dayOfWeek=new Date().getDay();
 const lastWexReset=load("pp_wexReset","");
 const thisMonday=new Date();
 thisMonday.setDate(thisMonday.getDate()-(dayOfWeek===0?6:dayOfWeek-1));
 const thisMondayStr=thisMonday.toDateString();
-if(lastWexReset!==thisMondayStr){
-  weeklyUsed=0;
-  save("pp_weeklyUsed",0);
-  save("pp_wexReset",thisMondayStr);
-}
+if(lastWexReset!==thisMondayStr){weeklyUsed=0;save("pp_weeklyUsed",0);save("pp_wexReset",thisMondayStr);}
 
-// =======================================
-// BUDGET ANZEIGE
-// =======================================
 function updBudget(){
   const used=foodLog.reduce((s,e)=>s+e.pts,0);
-  const eb=budget+sportPts;
-  const rem=eb-used;
+  const eb=budget+sportPts;const rem=eb-used;
   const el=document.getElementById("b-rem");
-  el.textContent=rem;
-  el.style.color=rem<0?"#dc2626":rem<=5?"#d97706":"#1e40af";
+  el.textContent=rem;el.style.color=rem<0?"#dc2626":rem<=5?"#d97706":"#1e40af";
   document.getElementById("b-sub").textContent="von "+eb+" Pkt.";
   document.getElementById("b-bar").style.width=Math.min(100,eb>0?used/eb*100:0)+"%";
   document.getElementById("b-sport").textContent="+"+sportPts;
@@ -938,15 +885,9 @@ function updBudget(){
   document.getElementById("b-day").textContent=budget;
 }
 
-// =======================================
-// NAVIGATION
-// =======================================
 const PAGES=["essen","sport","gewicht","masse","tagebuch"];
 function showTab(name,btn){
-  PAGES.forEach(p=>{
-    const el=document.getElementById("page-"+p);
-    if(el) el.className=p===name?"":"hidden";
-  });
+  PAGES.forEach(p=>{const el=document.getElementById("page-"+p);if(el)el.className=p===name?"":"hidden";});
   document.querySelectorAll(".tabs .tab").forEach(b=>b.classList.remove("on"));
   btn.classList.add("on");
   if(name==="gewicht")renderWChart();
@@ -955,14 +896,11 @@ function showTab(name,btn){
 function showSub(name,btn){
   document.getElementById("sub-liste").className=name==="liste"?"":"hidden";
   document.getElementById("sub-manuell").className=name==="manuell"?"hidden":"hidden";
-  if(name==="manuell") document.getElementById("sub-manuell").className="";
+  if(name==="manuell")document.getElementById("sub-manuell").className="";
   btn.closest(".stabs").querySelectorAll(".tab").forEach(b=>b.classList.remove("on"));
   btn.classList.add("on");
 }
 
-// =======================================
-// LEBENSMITTEL LISTE
-// =======================================
 function buildCatSel(){
   const el=document.getElementById("cat-sel");
   el.innerHTML=CATS.map(c=>`<option value="${c.k}">${c.l}</option>`).join("");
@@ -971,9 +909,7 @@ function selCat(k){curCat=k;document.getElementById("srch").value="";curSearch="
 function filterF(s){curSearch=s;curCat="";document.getElementById("cat-sel").value="";renderFoods();}
 
 function renderFoods(){
-  const list=FDB.filter(f=>
-    f[0].toLowerCase().includes(curSearch.toLowerCase())&&(curCat===""||f[8]===curCat)
-  );
+  const list=FDB.filter(f=>f[0].toLowerCase().includes(curSearch.toLowerCase())&&(curCat===""||f[8]===curCat));
   const el=document.getElementById("flist");
   if(!list.length){el.innerHTML='<div style="text-align:center;padding:20px;font-size:12px;color:#d1d5db">Nichts gefunden.</div>';return;}
   el.innerHTML=list.map(f=>{
@@ -994,16 +930,12 @@ function renderFoods(){
 }
 
 function quickAdd(idx){
-  const f=FDB[idx];
-  const p=calcPtsPortion(f,f[6]);
-  const kcal=calcKcal(f,f[6]);
+  const f=FDB[idx];const p=calcPtsPortion(f,f[6]);const kcal=calcKcal(f,f[6]);
   const por=f[7]==="Portion"?"1 Portion":f[7]==="ml"?f[6]+"ml":f[6]+"g";
   addToLog(f[0],p,por,kcal);
 }
-
 function openFood(idx){
-  const f=FDB[idx];
-  selFood=idx;
+  const f=FDB[idx];selFood=idx;
   const isMl=f[7]==="ml";
   document.getElementById("m-title").textContent=f[0];
   document.getElementById("m-sub").textContent="Wie viel "+(isMl?"Milliliter":"Gramm")+" möchtest du eintragen?";
@@ -1011,27 +943,15 @@ function openFood(idx){
   document.getElementById("g-inp").value=f[6];
   const qv=isMl?[50,100,150,200,250,330,500]:[10,20,30,50,75,100,150,200,250];
   document.getElementById("qrow").innerHTML=qv.map(g=>`<button class="qb${g==f[6]?" on":""}" onclick="setG(${g})">${g}${isMl?"ml":"g"}</button>`).join("");
-  updPrev();
-  document.getElementById("modal").classList.add("show");
+  updPrev();document.getElementById("modal").classList.add("show");
 }
-function setG(g){
-  document.getElementById("g-inp").value=g;
-  document.querySelectorAll(".qb").forEach(b=>b.classList.toggle("on",parseInt(b.textContent)===g));
-  updPrev();
-}
-function adjG(d){
-  const f=FDB[selFood],step=f[7]==="ml"?50:10;
-  const c=parseFloat(document.getElementById("g-inp").value)||0;
-  document.getElementById("g-inp").value=Math.max(1,c+d*step);
-  updPrev();
-}
+function setG(g){document.getElementById("g-inp").value=g;document.querySelectorAll(".qb").forEach(b=>b.classList.toggle("on",parseInt(b.textContent)===g));updPrev();}
+function adjG(d){const f=FDB[selFood],step=f[7]==="ml"?50:10;const c=parseFloat(document.getElementById("g-inp").value)||0;document.getElementById("g-inp").value=Math.max(1,c+d*step);updPrev();}
 function updPrev(){
   if(selFood===null)return;
   const g=parseFloat(document.getElementById("g-inp").value)||0;
-  const p=calcPtsPortion(FDB[selFood],g);
-  const kcal=calcKcal(FDB[selFood],g);
-  const el=document.getElementById("prev-v");
-  el.textContent=p; el.style.color=ptsCol(p);
+  const p=calcPtsPortion(FDB[selFood],g);const kcal=calcKcal(FDB[selFood],g);
+  const el=document.getElementById("prev-v");el.textContent=p;el.style.color=ptsCol(p);
   document.getElementById("prev-kcal").textContent=kcal+" kcal";
 }
 function closeModal(){document.getElementById("modal").classList.remove("show");selFood=null;}
@@ -1039,61 +959,35 @@ function confirmAdd(){
   if(selFood===null)return;
   const f=FDB[selFood],g=parseFloat(document.getElementById("g-inp").value)||0;
   const p=calcPtsPortion(f,g),kcal=calcKcal(f,g);
-  addToLog(f[0],p,g+(f[7]==="ml"?"ml":"g"),kcal);
-  closeModal();
+  addToLog(f[0],p,g+(f[7]==="ml"?"ml":"g"),kcal);closeModal();
 }
 
-// =======================================
-// LOG
-// =======================================
 function addToLog(name,p,portion,kcal){
   pendingFood={name,pts:p,portion,kcal:kcal||0};
   document.getElementById("meal-modal").classList.add("show");
 }
 function confirmMeal(meal){
-  if(!pendingFood) return;
+  if(!pendingFood)return;
   const mealLabels={fruehstueck:"🌅 Frühstück",mittag:"☀️ Mittagessen",abend:"🌙 Abendessen",snack:"🍎 Snack","":" "};
-  pendingFood.meal=meal;
-  pendingFood.mealLabel=mealLabels[meal]||"";
-  const eb=budget+sportPts;
-  const used=foodLog.reduce((s,e)=>s+e.pts,0);
-  const rem=eb-used;
+  pendingFood.meal=meal;pendingFood.mealLabel=mealLabels[meal]||"";
+  const eb=budget+sportPts;const used=foodLog.reduce((s,e)=>s+e.pts,0);const rem=eb-used;
   const ov=Math.max(0,pendingFood.pts-rem);
   if(ov>0){weeklyUsed+=ov;save("pp_weeklyUsed",weeklyUsed);}
-  foodLog.push({...pendingFood});
-  save("pp_foodLog",foodLog);
-  document.getElementById("meal-modal").classList.remove("show");
-  pendingFood=null;
-  updBudget();renderLog();
-  showTabByName("tagebuch");
-  showToast("✅ Hinzugefügt!");
+  foodLog.push({...pendingFood});save("pp_foodLog",foodLog);
+  document.getElementById("meal-modal").classList.remove("show");pendingFood=null;
+  updBudget();renderLog();showTabByName("tagebuch");showToast("✅ Hinzugefügt!");
 }
-
 function showTabByName(name){
   PAGES.forEach(p=>{const el=document.getElementById("page-"+p);if(el)el.className=p===name?"":"hidden";});
   document.querySelectorAll(".tabs .tab").forEach((b,i)=>b.classList.toggle("on",PAGES[i]===name));
 }
-
-function askDel(i){
-  delIdx=i;
-  document.getElementById("del-name").textContent=foodLog[i].name+" ("+foodLog[i].portion+")";
-  document.getElementById("del-modal").classList.add("show");
-}
+function askDel(i){delIdx=i;document.getElementById("del-name").textContent=foodLog[i].name+" ("+foodLog[i].portion+")";document.getElementById("del-modal").classList.add("show");}
 function closeDelModal(){document.getElementById("del-modal").classList.remove("show");delIdx=null;}
 function confirmDel(){
-  if(delIdx===null)return;
-  const removed=foodLog[delIdx];
-  foodLog.splice(delIdx,1);
-  save("pp_foodLog",foodLog);
-  const used=foodLog.reduce((s,e)=>s+e.pts,0);
-  const eb=budget+sportPts;
-  weeklyUsed=Math.max(0,used>eb?used-eb:0);
-  save("pp_weeklyUsed",weeklyUsed);
-  updBudget();renderLog();
-  closeDelModal();
-  showToast("🗑 "+removed.name+" gelöscht");
+  if(delIdx===null)return;const removed=foodLog[delIdx];foodLog.splice(delIdx,1);save("pp_foodLog",foodLog);
+  const used=foodLog.reduce((s,e)=>s+e.pts,0);const eb=budget+sportPts;weeklyUsed=Math.max(0,used>eb?used-eb:0);save("pp_weeklyUsed",weeklyUsed);
+  updBudget();renderLog();closeDelModal();showToast("🗑 "+removed.name+" gelöscht");
 }
-
 function resetLog(){
   if(!confirm("Tagebuch zurücksetzen?"))return;
   foodLog=[];sportLog=[];sportPts=0;weeklyUsed=0;
@@ -1101,61 +995,29 @@ function resetLog(){
   updBudget();renderLog();renderSportLog();
 }
 
-// =======================================
-// HISTORY / TAGEBUCH VERLAUF
-// =======================================
-let viewingDate = "today"; // "today" or date string
-
+let viewingDate="today";
 function renderDayTabs(){
-  const el=document.getElementById("day-tabs");
-  if(!el) return;
-  const hist=load("pp_history",[]);
-  const days=["So","Mo","Di","Mi","Do","Fr","Sa"];
+  const el=document.getElementById("day-tabs");if(!el)return;
+  const hist=load("pp_history",[]);const days=["So","Mo","Di","Mi","Do","Fr","Sa"];
   function makeBtn(label,date){
     const active=viewingDate===date;
-    return '<button onclick="viewDay(\"'+date+'\")" style="flex-shrink:0;padding:5px 12px;border-radius:100px;font-size:11px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;background:'+(active?"#2563eb":"white")+';color:'+(active?"white":"#6b7280")+';box-shadow:0 1px 3px rgba(0,0,0,.1)">'+label+"</button>";
+    return '<button onclick="viewDay(\''+date+'\')" style="flex-shrink:0;padding:5px 12px;border-radius:100px;font-size:11px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;background:'+(active?"#2563eb":"white")+';color:'+(active?"white":"#6b7280")+';box-shadow:0 1px 3px rgba(0,0,0,.1)">'+label+"</button>";
   }
   let t=makeBtn("Heute","today");
-  hist.forEach(h=>{
-    const d=new Date(h.date);
-    const lbl=days[d.getDay()]+" "+d.getDate()+"."+(d.getMonth()+1)+".";
-    t+=makeBtn(lbl,h.date);
-  });
+  hist.forEach(h=>{const d=new Date(h.date);const lbl=days[d.getDay()]+" "+d.getDate()+"."+(d.getMonth()+1)+".";t+=makeBtn(lbl,h.date);});
   el.innerHTML=t;
 }
-
-function viewDay(date){
-  viewingDate = date;
-  renderDayTabs();
-  renderLog();
-}
-
-function getViewLog(){
-  if(viewingDate === "today") return foodLog;
-  const history = load("pp_history", []);
-  const day = history.find(h => h.date === viewingDate);
-  return day ? day.foodLog : [];
-}
-
-function getViewBudget(){
-  if(viewingDate === "today") return budget + sportPts;
-  const history = load("pp_history", []);
-  const day = history.find(h => h.date === viewingDate);
-  return day ? (day.budget + (day.sportPts||0)) : budget;
-}
+function viewDay(date){viewingDate=date;renderDayTabs();renderLog();}
+function getViewLog(){if(viewingDate==="today")return foodLog;const history=load("pp_history",[]);const day=history.find(h=>h.date===viewingDate);return day?day.foodLog:[];}
+function getViewBudget(){if(viewingDate==="today")return budget+sportPts;const history=load("pp_history",[]);const day=history.find(h=>h.date===viewingDate);return day?(day.budget+(day.sportPts||0)):budget;}
 
 function renderLog(){
   const viewLog=getViewLog();
-  const used=viewLog.reduce((s,e)=>s+e.pts,0);
-  const totalKcal=viewLog.reduce((s,e)=>s+(e.kcal||0),0);
-  const eb=getViewBudget();
-  const empty=document.getElementById("log-empty");
-  const items=document.getElementById("log-items");
-  const total=document.getElementById("log-total");
+  const used=viewLog.reduce((s,e)=>s+e.pts,0);const totalKcal=viewLog.reduce((s,e)=>s+(e.kcal||0),0);const eb=getViewBudget();
+  const empty=document.getElementById("log-empty");const items=document.getElementById("log-items");const total=document.getElementById("log-total");
   renderDayTabs();
   if(!viewLog.length){empty.style.display="block";items.innerHTML="";total.classList.add("hidden");return;}
   empty.style.display="none";
-  // Group by meal
   const MEALS=[
     {key:"fruehstueck",label:"🌅 Frühstück",bg:"#fef9c3",border:"#fde047",col:"#854d0e"},
     {key:"mittag",label:"☀️ Mittagessen",bg:"#dcfce7",border:"#86efac",col:"#166534"},
@@ -1165,142 +1027,78 @@ function renderLog(){
   ];
   let html2="";
   MEALS.forEach(m=>{
-    const mi=viewLog.map((e,i)=>({...e,i})).filter(e=>(e.meal||"")===m.key);
-    if(!mi.length)return;
-    const mPts=mi.reduce((s,e)=>s+e.pts,0);
-    const mKcal=mi.reduce((s,e)=>s+(e.kcal||0),0);
+    const mi=viewLog.map((e,i)=>({...e,i})).filter(e=>(e.meal||"")===m.key);if(!mi.length)return;
+    const mPts=mi.reduce((s,e)=>s+e.pts,0);const mKcal=mi.reduce((s,e)=>s+(e.kcal||0),0);
     html2+='<div style="margin-bottom:8px">';
     html2+='<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;border-radius:8px;background:'+m.bg+';border:1px solid '+m.border+';margin-bottom:4px">';
     html2+='<span style="font-size:11px;font-weight:700;color:'+m.col+'">'+m.label+'</span>';
-    html2+='<span style="font-size:10px;color:'+m.col+'">'+mPts+' Pkt. · '+mKcal+' kcal</span>';
-    html2+='</div>';
+    html2+='<span style="font-size:10px;color:'+m.col+'">'+mPts+' Pkt. · '+mKcal+' kcal</span></div>';
     mi.forEach(e=>{
       html2+='<div class="lrow"'+(viewingDate==="today"?' onclick="askDel('+e.i+')"':'')+' style="cursor:'+(viewingDate==="today"?'pointer':'default')+'">';
       html2+='<div style="flex:1;min-width:0;padding-right:8px">';
       html2+='<div style="font-size:12px;color:#4b5563;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.name+'</div>';
-      html2+='<div style="font-size:11px;color:#6b7280;margin-top:1px">'+e.portion+(e.kcal?' · '+e.kcal+' kcal':'')+'</div>';
-      html2+='</div>';
+      html2+='<div style="font-size:11px;color:#6b7280;margin-top:1px">'+e.portion+(e.kcal?' · '+e.kcal+' kcal':'')+'</div></div>';
       html2+='<div style="display:flex;align-items:center;gap:7px;flex-shrink:0">';
       html2+='<span style="font-size:12px;font-weight:700;color:#1e40af">'+e.pts+' Pkt.</span>';
-      html2+='<span style="font-size:11px;color:#fca5a5">✕</span>';
-      html2+='</div></div>';
+      html2+='<span style="font-size:11px;color:#fca5a5">✕</span></div></div>';
     });
     html2+='</div>';
   });
-  items.innerHTML=html2;
-  total.classList.remove("hidden");
-  const tv=document.getElementById("log-total-pts");
-  tv.textContent=used+" / "+eb+" Pkt.";
-  tv.style.color=used>eb?"#dc2626":"#1e40af";
+  items.innerHTML=html2;total.classList.remove("hidden");
+  const tv=document.getElementById("log-total-pts");tv.textContent=used+" / "+eb+" Pkt.";tv.style.color=used>eb?"#dc2626":"#1e40af";
   document.getElementById("log-total-kcal").textContent=totalKcal+" kcal heute";
   const wexRow=document.getElementById("wex-row");
   if(weeklyUsed>0){wexRow.style.display="flex";document.getElementById("wex-val").textContent=weeklyUsed+" Pkt.";}
   else wexRow.style.display="none";
 }
 
-// =======================================
-// MANUELL
-// =======================================
 function calcManual(){
-  const k=parseFloat(document.getElementById("mn-k").value)||0;
-  const p=parseFloat(document.getElementById("mn-p").value)||0;
-  const s=parseFloat(document.getElementById("mn-s").value)||0;
-  const sf=parseFloat(document.getElementById("mn-sf").value)||0;
-  const f=parseFloat(document.getElementById("mn-f").value)||0;
-  const pts=calcPts(k,p,s,sf,f,100);
-  document.getElementById("mn-pts").textContent=pts;
-  document.getElementById("mn-kcal-txt").textContent=Math.round(k)+" kcal";
-  document.getElementById("mn-res").classList.remove("hidden");
+  const k=parseFloat(document.getElementById("mn-k").value)||0;const p=parseFloat(document.getElementById("mn-p").value)||0;
+  const s=parseFloat(document.getElementById("mn-s").value)||0;const sf=parseFloat(document.getElementById("mn-sf").value)||0;const f=parseFloat(document.getElementById("mn-f").value)||0;
+  const pts=calcPts(k,p,s,sf,f,100);document.getElementById("mn-pts").textContent=pts;
+  document.getElementById("mn-kcal-txt").textContent=Math.round(k)+" kcal";document.getElementById("mn-res").classList.remove("hidden");
 }
 function addManual(){
-  const k=parseFloat(document.getElementById("mn-k").value)||0;
-  const pts=parseInt(document.getElementById("mn-pts").textContent)||0;
-  const name=document.getElementById("mn-name").value.trim()||"Lebensmittel";
+  const k=parseFloat(document.getElementById("mn-k").value)||0;const pts=parseInt(document.getElementById("mn-pts").textContent)||0;const name=document.getElementById("mn-name").value.trim()||"Lebensmittel";
   addToLog(name,pts,"1 Portion",Math.round(k));
-  ["mn-name","mn-k","mn-p","mn-s","mn-sf","mn-f"].forEach(id=>document.getElementById(id).value="");
-  document.getElementById("mn-res").classList.add("hidden");
+  ["mn-name","mn-k","mn-p","mn-s","mn-sf","mn-f"].forEach(id=>document.getElementById(id).value="");document.getElementById("mn-res").classList.add("hidden");
 }
 
-// =======================================
-// SPORT
-// =======================================
-function renderSportGrid(){
-  document.getElementById("sgrid").innerHTML=SPORTS.map((s,i)=>
-    `<div class="sc" onclick="addSport(${i})">
-      <div style="font-size:11px;font-weight:600;color:#166534;line-height:1.3">${s.n}</div>
-      <div style="font-size:20px;font-weight:800;color:#16a34a;margin-top:2px">+${s.pts}</div>
-      <div style="font-size:10px;color:#4ade80">Punkte</div>
-    </div>`).join("");
-}
-function addSport(i){
-  const s=SPORTS[i];sportPts+=s.pts;sportLog.push({n:s.n,pts:s.pts});
-  save("pp_sportPts",sportPts);save("pp_sportLog",sportLog);
-  updBudget();renderSportLog();showToast("🏃 +"+s.pts+" Punkte gutgeschrieben!");
-}
+function renderSportGrid(){document.getElementById("sgrid").innerHTML=SPORTS.map((s,i)=>`<div class="sc" onclick="addSport(${i})"><div style="font-size:11px;font-weight:600;color:#166534;line-height:1.3">${s.n}</div><div style="font-size:20px;font-weight:800;color:#16a34a;margin-top:2px">+${s.pts}</div><div style="font-size:10px;color:#4ade80">Punkte</div></div>`).join("");}
+function addSport(i){const s=SPORTS[i];sportPts+=s.pts;sportLog.push({n:s.n,pts:s.pts});save("pp_sportPts",sportPts);save("pp_sportLog",sportLog);updBudget();renderSportLog();showToast("🏃 +"+s.pts+" Punkte gutgeschrieben!");}
 function addCustomSport(){
-  const ppm=parseFloat(document.getElementById("cs-sel").value)||0.21;
-  const min=parseFloat(document.getElementById("cs-min").value)||30;
-  const pts=Math.max(1,Math.round(ppm*min));
-  const sel=document.getElementById("cs-sel");
-  const name=sel.options[sel.selectedIndex].text+" ("+min+" Min)";
-  sportPts+=pts;sportLog.push({n:name,pts});
-  save("pp_sportPts",sportPts);save("pp_sportLog",sportLog);
-  updBudget();renderSportLog();showToast("🏃 +"+pts+" Punkte gutgeschrieben!");
+  const ppm=parseFloat(document.getElementById("cs-sel").value)||0.21;const min=parseFloat(document.getElementById("cs-min").value)||30;const pts=Math.max(1,Math.round(ppm*min));
+  const sel=document.getElementById("cs-sel");const name=sel.options[sel.selectedIndex].text+" ("+min+" Min)";
+  sportPts+=pts;sportLog.push({n:name,pts});save("pp_sportPts",sportPts);save("pp_sportLog",sportLog);updBudget();renderSportLog();showToast("🏃 +"+pts+" Punkte gutgeschrieben!");
 }
-function removeSport(i){
-  sportPts=Math.max(0,sportPts-sportLog[i].pts);
-  sportLog.splice(i,1);
-  save("pp_sportPts",sportPts);save("pp_sportLog",sportLog);
-  updBudget();renderSportLog();
-}
+function removeSport(i){sportPts=Math.max(0,sportPts-sportLog[i].pts);sportLog.splice(i,1);save("pp_sportPts",sportPts);save("pp_sportLog",sportLog);updBudget();renderSportLog();}
 function renderSportLog(){
-  const empty=document.getElementById("sp-empty");
-  const items=document.getElementById("sp-items");
+  const empty=document.getElementById("sp-empty");const items=document.getElementById("sp-items");
   if(!sportLog.length){empty.style.display="block";items.innerHTML="";return;}
   empty.style.display="none";
-  items.innerHTML=sportLog.map((s,i)=>`
-    <div class="sp-row">
-      <span style="font-size:12px;color:#166534">${s.n}</span>
-      <div style="display:flex;align-items:center;gap:7px">
-        <span style="font-size:12px;font-weight:700;color:#16a34a">+${s.pts} Pkt.</span>
-        <button onclick="removeSport(${i})" style="background:none;border:none;color:#bbf7d0;font-size:12px;cursor:pointer">✕</button>
-      </div>
-    </div>`).join("");
+  items.innerHTML=sportLog.map((s,i)=>`<div class="sp-row"><span style="font-size:12px;color:#166534">${s.n}</span><div style="display:flex;align-items:center;gap:7px"><span style="font-size:12px;font-weight:700;color:#16a34a">+${s.pts} Pkt.</span><button onclick="removeSport(${i})" style="background:none;border:none;color:#bbf7d0;font-size:12px;cursor:pointer">✕</button></div></div>`).join("");
 }
 
-// =======================================
-// GEWICHT
-// =======================================
 function saveWeight(){
-  const v=parseFloat(document.getElementById("w-inp").value);
-  if(isNaN(v)||v<30||v>300){alert("Bitte gültiges Gewicht eingeben.");return;}
+  const v=parseFloat(document.getElementById("w-inp").value);if(isNaN(v)||v<30||v>300){alert("Bitte gültiges Gewicht eingeben.");return;}
   const d=new Date().toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"});
-  weightHistory=weightHistory.filter(e=>e.date!==d);
-  weightHistory.unshift({date:d,kg:v});
-  if(weightHistory.length>20)weightHistory=weightHistory.slice(0,20);
-  budget=calcBudget(v);
-  save("pp_weightHistory",weightHistory);save("pp_budget",budget);
+  weightHistory=weightHistory.filter(e=>e.date!==d);weightHistory.unshift({date:d,kg:v});if(weightHistory.length>20)weightHistory=weightHistory.slice(0,20);
+  budget=calcBudget(v);save("pp_weightHistory",weightHistory);save("pp_budget",budget);
   document.getElementById("w-inp").value="";
-  const ok=document.getElementById("w-ok");
-  ok.textContent="✅ Budget angepasst auf "+budget+" Punkte/Tag! (sitzend, kein Hula Hoop)";
-  ok.classList.remove("hidden");
-  setTimeout(()=>ok.classList.add("hidden"),4000);
+  const ok=document.getElementById("w-ok");ok.textContent="✅ Budget angepasst auf "+budget+" Punkte/Tag!";ok.classList.remove("hidden");setTimeout(()=>ok.classList.add("hidden"),4000);
   updBudget();renderWHist();renderWChart();renderBudgetTable();
 }
 function renderWHist(){
-  const el=document.getElementById("w-hist");
-  if(!weightHistory.length){el.innerHTML="";return;}
+  const el=document.getElementById("w-hist");if(!weightHistory.length){el.innerHTML="";return;}
   el.innerHTML=weightHistory.slice(0,6).map((e,i)=>{
-    const prev=weightHistory[i+1];
-    const diff=prev?(e.kg-prev.kg).toFixed(1):null;
+    const prev=weightHistory[i+1];const diff=prev?(e.kg-prev.kg).toFixed(1):null;
     const dc=diff!==null?(parseFloat(diff)<0?"background:#d1fae5;color:#065f46":parseFloat(diff)>0?"background:#fee2e2;color:#991b1b":"background:#f3f4f6;color:#6b7280"):"";
     const ds=diff!==null?`<span style="font-size:10px;padding:2px 6px;border-radius:100px;font-weight:600;${dc}">${parseFloat(diff)<0?"▼":parseFloat(diff)>0?"▲":"="} ${Math.abs(diff)} kg</span>`:"";
     return `<div class="wrow"><span style="color:#9ca3af">${e.date}</span><span style="font-weight:700">${e.kg.toFixed(1)} kg</span><span style="color:#9ca3af">→ ${calcBudget(e.kg)} Pkt.</span>${ds}</div>`;
   }).join("");
 }
 function renderBudgetTable(){
-  const el=document.getElementById("budget-table");
-  const curKg=weightHistory.length?weightHistory[0].kg:77;
+  const el=document.getElementById("budget-table");const curKg=weightHistory.length?weightHistory[0].kg:77;
   el.innerHTML=[60,65,68,70,72,74,77,80,83,85,90].map(w=>`
     <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f9fafb">
       <span style="font-size:12px;color:#6b7280">${w} kg</span>
@@ -1310,156 +1108,82 @@ function renderBudgetTable(){
     </div>`).join("");
 }
 
-// =======================================
-// MASSE
-// =======================================
 function buildMeasInputs(){
-  document.getElementById("meas-inputs").innerHTML=MEAS.map(f=>`
-    <div>
-      <span class="ilbl" style="color:${f.c};font-weight:600">${f.l} (cm)</span>
-      <input type="number" id="m-${f.k}" placeholder="0" min="0" step="0.5">
-    </div>`).join("");
+  document.getElementById("meas-inputs").innerHTML=MEAS.map(f=>`<div><span class="ilbl" style="color:${f.c};font-weight:600">${f.l} (cm)</span><input type="number" id="m-${f.k}" placeholder="0" min="0" step="0.5"></div>`).join("");
   document.getElementById("m-date").value=new Date().toISOString().split("T")[0];
 }
 function saveMeas(){
   const ds=document.getElementById("m-date").value;
   const dateStr=ds?new Date(ds).toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"}):new Date().toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"});
-  const entry={date:dateStr};
-  let hasAny=false;
+  const entry={date:dateStr};let hasAny=false;
   MEAS.forEach(f=>{const v=parseFloat(document.getElementById("m-"+f.k).value);if(!isNaN(v)&&v>0){entry[f.k]=v;hasAny=true;}});
   if(!hasAny){alert("Bitte mindestens einen Wert eingeben.");return;}
-  measHistory=measHistory.filter(e=>e.date!==dateStr);
-  measHistory.unshift(entry);
-  if(measHistory.length>20)measHistory=measHistory.slice(0,20);
-  save("pp_measHistory",measHistory);
+  measHistory=measHistory.filter(e=>e.date!==dateStr);measHistory.unshift(entry);if(measHistory.length>20)measHistory=measHistory.slice(0,20);save("pp_measHistory",measHistory);
   MEAS.forEach(f=>{document.getElementById("m-"+f.k).value="";});
-  const ok=document.getElementById("m-ok");ok.textContent="✅ Maße gespeichert!";ok.classList.remove("hidden");
-  setTimeout(()=>ok.classList.add("hidden"),3000);
+  const ok=document.getElementById("m-ok");ok.textContent="✅ Maße gespeichert!";ok.classList.remove("hidden");setTimeout(()=>ok.classList.add("hidden"),3000);
   renderMeasHist();renderMChart();
 }
 function renderMeasHist(){
-  const hc=document.getElementById("m-hist-card");
-  const em=document.getElementById("m-empty");
-  const hel=document.getElementById("m-hist");
+  const hc=document.getElementById("m-hist-card");const em=document.getElementById("m-empty");const hel=document.getElementById("m-hist");
   if(!measHistory.length){hc.style.display="none";em.style.display="block";return;}
   hc.style.display="block";em.style.display="none";
   hel.innerHTML=measHistory.slice(0,5).map((e,i)=>{
     const prev=measHistory[i+1];
-    return `<div class="mhrow">
-      <div style="font-size:11px;font-weight:600;color:#6b7280;margin-bottom:5px">${e.date}</div>
-      <div style="display:flex;flex-wrap:wrap">${MEAS.filter(f=>e[f.k]).map(f=>{
-        const diff=prev&&prev[f.k]?(e[f.k]-prev[f.k]).toFixed(1):null;
-        const dc=diff!==null?(parseFloat(diff)<0?"#065f46":parseFloat(diff)>0?"#991b1b":"#9ca3af"):"";
-        return `<span class="mbadge" style="background:${f.c}15;border:1px solid ${f.c}30">
-          <span style="color:${f.c};font-size:10px;font-weight:600">${f.l}:</span>
-          <span style="font-size:10px;font-weight:700;color:#374151;margin-left:3px">${e[f.k]} cm</span>
-          ${diff!==null?`<span style="font-size:10px;color:${dc};margin-left:2px">${parseFloat(diff)<0?"▼":parseFloat(diff)>0?"▲":"="}${Math.abs(diff)}</span>`:""}
-        </span>`;
-      }).join("")}</div>
-    </div>`;
+    return `<div class="mhrow"><div style="font-size:11px;font-weight:600;color:#6b7280;margin-bottom:5px">${e.date}</div><div style="display:flex;flex-wrap:wrap">${MEAS.filter(f=>e[f.k]).map(f=>{
+      const diff=prev&&prev[f.k]?(e[f.k]-prev[f.k]).toFixed(1):null;const dc=diff!==null?(parseFloat(diff)<0?"#065f46":parseFloat(diff)>0?"#991b1b":"#9ca3af"):"";
+      return `<span class="mbadge" style="background:${f.c}15;border:1px solid ${f.c}30"><span style="color:${f.c};font-size:10px;font-weight:600">${f.l}:</span><span style="font-size:10px;font-weight:700;color:#374151;margin-left:3px">${e[f.k]} cm</span>${diff!==null?`<span style="font-size:10px;color:${dc};margin-left:2px">${parseFloat(diff)<0?"▼":parseFloat(diff)>0?"▲":"="}${Math.abs(diff)}</span>`:""}</span>`;
+    }).join("")}</div></div>`;
   }).join("");
 }
 
-// =======================================
-// CHARTS
-// =======================================
 function drawLine(canvas,data,color){
-  if(!canvas||data.length<2)return;
-  const ctx=canvas.getContext("2d");
+  if(!canvas||data.length<2)return;const ctx=canvas.getContext("2d");
   const W=canvas.offsetWidth||300,H=parseInt(canvas.getAttribute("height"))||120;
   canvas.width=W*(window.devicePixelRatio||1);canvas.height=H*(window.devicePixelRatio||1);
   ctx.scale(window.devicePixelRatio||1,window.devicePixelRatio||1);ctx.clearRect(0,0,W,H);
   const vals=data.map(d=>d.v),minV=Math.min(...vals),maxV=Math.max(...vals),range=maxV-minV||1;
   const p={t:14,r:8,b:26,l:36},cW=W-p.l-p.r,cH=H-p.t-p.b;
   const tx=i=>p.l+(i/(data.length-1))*cW,ty=v=>p.t+cH-((v-minV)/range)*cH;
-  [0,0.5,1].forEach(r=>{
-    const y=p.t+r*cH;ctx.strokeStyle="#f3f4f6";ctx.lineWidth=1;
-    ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(p.l+cW,y);ctx.stroke();
-    ctx.fillStyle="#9ca3af";ctx.font="9px system-ui";ctx.textAlign="right";
-    ctx.fillText((minV+(1-r)*range).toFixed(1),p.l-3,y+3);
-  });
-  const step=Math.max(1,Math.floor((data.length-1)/4));
-  ctx.fillStyle="#9ca3af";ctx.font="9px system-ui";ctx.textAlign="center";
-  data.forEach((d,i)=>{if(i%step===0)ctx.fillText(d.l,tx(i),H-p.b+13);});
-  ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.beginPath();
-  data.forEach((d,i)=>i===0?ctx.moveTo(tx(i),ty(d.v)):ctx.lineTo(tx(i),ty(d.v)));ctx.stroke();
-  data.forEach((d,i)=>{
-    ctx.fillStyle=color;ctx.beginPath();ctx.arc(tx(i),ty(d.v),3.5,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle=color;ctx.font="bold 9px system-ui";ctx.textAlign="center";
-    ctx.fillText(d.v.toFixed(1),tx(i),ty(d.v)-8);
-  });
+  [0,0.5,1].forEach(r=>{const y=p.t+r*cH;ctx.strokeStyle="#f3f4f6";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(p.l+cW,y);ctx.stroke();ctx.fillStyle="#9ca3af";ctx.font="9px system-ui";ctx.textAlign="right";ctx.fillText((minV+(1-r)*range).toFixed(1),p.l-3,y+3);});
+  const step=Math.max(1,Math.floor((data.length-1)/4));ctx.fillStyle="#9ca3af";ctx.font="9px system-ui";ctx.textAlign="center";data.forEach((d,i)=>{if(i%step===0)ctx.fillText(d.l,tx(i),H-p.b+13);});
+  ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.beginPath();data.forEach((d,i)=>i===0?ctx.moveTo(tx(i),ty(d.v)):ctx.lineTo(tx(i),ty(d.v)));ctx.stroke();
+  data.forEach((d,i)=>{ctx.fillStyle=color;ctx.beginPath();ctx.arc(tx(i),ty(d.v),3.5,0,Math.PI*2);ctx.fill();ctx.fillStyle=color;ctx.font="bold 9px system-ui";ctx.textAlign="center";ctx.fillText(d.v.toFixed(1),tx(i),ty(d.v)-8);});
 }
 function drawMulti(canvas,series){
-  if(!canvas)return;
-  const all=series.flatMap(s=>s.data.map(d=>d.v));
-  if(all.length<2)return;
-  const ctx=canvas.getContext("2d");
-  const W=canvas.offsetWidth||300,H=parseInt(canvas.getAttribute("height"))||150;
+  if(!canvas)return;const all=series.flatMap(s=>s.data.map(d=>d.v));if(all.length<2)return;
+  const ctx=canvas.getContext("2d");const W=canvas.offsetWidth||300,H=parseInt(canvas.getAttribute("height"))||150;
   canvas.width=W*(window.devicePixelRatio||1);canvas.height=H*(window.devicePixelRatio||1);
   ctx.scale(window.devicePixelRatio||1,window.devicePixelRatio||1);ctx.clearRect(0,0,W,H);
   const labels=[...new Set(series.flatMap(s=>s.data.map(d=>d.l)))].sort();
   const minV=Math.min(...all)*0.97,maxV=Math.max(...all)*1.03,range=maxV-minV||1;
   const p={t:10,r:8,b:26,l:36},cW=W-p.l-p.r,cH=H-p.t-p.b;
   const tx=i=>p.l+(i/Math.max(labels.length-1,1))*cW,ty=v=>p.t+cH-((v-minV)/range)*cH;
-  [0,0.5,1].forEach(r=>{
-    const y=p.t+r*cH;ctx.strokeStyle="#f3f4f6";ctx.lineWidth=1;
-    ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(p.l+cW,y);ctx.stroke();
-    ctx.fillStyle="#9ca3af";ctx.font="9px system-ui";ctx.textAlign="right";
-    ctx.fillText((minV+(1-r)*range).toFixed(0),p.l-3,y+3);
-  });
-  const step=Math.max(1,Math.floor((labels.length-1)/4));
-  ctx.fillStyle="#9ca3af";ctx.font="9px system-ui";ctx.textAlign="center";
-  labels.forEach((l,i)=>{if(i%step===0)ctx.fillText(l,tx(i),H-p.b+13);});
+  [0,0.5,1].forEach(r=>{const y=p.t+r*cH;ctx.strokeStyle="#f3f4f6";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(p.l+cW,y);ctx.stroke();ctx.fillStyle="#9ca3af";ctx.font="9px system-ui";ctx.textAlign="right";ctx.fillText((minV+(1-r)*range).toFixed(0),p.l-3,y+3);});
+  const step=Math.max(1,Math.floor((labels.length-1)/4));ctx.fillStyle="#9ca3af";ctx.font="9px system-ui";ctx.textAlign="center";labels.forEach((l,i)=>{if(i%step===0)ctx.fillText(l,tx(i),H-p.b+13);});
   series.forEach(s=>{
-    if(s.data.length<1)return;
-    ctx.strokeStyle=s.color;ctx.lineWidth=2;ctx.beginPath();
+    if(s.data.length<1)return;ctx.strokeStyle=s.color;ctx.lineWidth=2;ctx.beginPath();
     s.data.forEach((d,i)=>{const xi=labels.indexOf(d.l);i===0?ctx.moveTo(tx(xi),ty(d.v)):ctx.lineTo(tx(xi),ty(d.v));});ctx.stroke();
     s.data.forEach(d=>{const xi=labels.indexOf(d.l);ctx.fillStyle=s.color;ctx.beginPath();ctx.arc(tx(xi),ty(d.v),3,0,Math.PI*2);ctx.fill();});
   });
 }
 function renderWChart(){
-  const wrap=document.getElementById("w-chart-wrap");
-  if(weightHistory.length<2){wrap.classList.add("hidden");return;}
-  wrap.classList.remove("hidden");
-  const data=[...weightHistory].reverse().map(e=>({l:e.date.slice(0,5),v:e.kg}));
+  const wrap=document.getElementById("w-chart-wrap");if(weightHistory.length<2){wrap.classList.add("hidden");return;}
+  wrap.classList.remove("hidden");const data=[...weightHistory].reverse().map(e=>({l:e.date.slice(0,5),v:e.kg}));
   setTimeout(()=>drawLine(document.getElementById("w-chart"),data,"#2563eb"),50);
 }
 function renderMChart(){
   const cc=document.getElementById("m-chart-card");
-  const series=MEAS.map(f=>({
-    color:f.color||f.c,label:f.l,
-    data:[...measHistory].reverse().filter(e=>e[f.k]).map(e=>({l:e.date.slice(0,5),v:e[f.k]}))
-  })).filter(s=>s.data.length>0);
+  const series=MEAS.map(f=>({color:f.color||f.c,label:f.l,data:[...measHistory].reverse().filter(e=>e[f.k]).map(e=>({l:e.date.slice(0,5),v:e[f.k]}))})).filter(s=>s.data.length>0);
   if(!series.length||series.every(s=>s.data.length<2)){cc.style.display="none";return;}
   cc.style.display="block";
-  document.getElementById("m-legend").innerHTML=series.map(s=>`
-    <div style="display:flex;align-items:center;gap:4px">
-      <div style="width:8px;height:8px;border-radius:50%;background:${s.color}"></div>
-      <span style="font-size:10px;color:#6b7280">${s.label}</span>
-    </div>`).join("");
+  document.getElementById("m-legend").innerHTML=series.map(s=>`<div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;border-radius:50%;background:${s.color}"></div><span style="font-size:10px;color:#6b7280">${s.label}</span></div>`).join("");
   setTimeout(()=>drawMulti(document.getElementById("m-chart"),series),50);
 }
 
-// =======================================
-// TOAST
-// =======================================
 let toastTimer=null;
-function showToast(msg){
-  const el=document.getElementById("toast");
-  el.textContent=msg;el.classList.add("show");
-  if(toastTimer)clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>el.classList.remove("show"),2500);
-}
+function showToast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2500);}
 
-// =======================================
-// INIT
-// =======================================
-buildCatSel();
-renderFoods();
-renderSportGrid();renderSportLog();
-renderWHist();renderBudgetTable();
-buildMeasInputs();renderMeasHist();
-updBudget();renderLog();
+buildCatSel();renderFoods();renderSportGrid();renderSportLog();renderWHist();renderBudgetTable();buildMeasInputs();renderMeasHist();updBudget();renderLog();
 window.addEventListener("resize",()=>{renderWChart();renderMChart();});
 </script>
 
