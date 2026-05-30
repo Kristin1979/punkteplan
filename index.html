@@ -323,6 +323,7 @@ const FDB=[
 ["Eisjoghurt (1 Kugel)",110,3.5,14,1.5,0,50,"g","suesses"],
 ["Frucht-/Milcheis (1 Kugel)",120,2,18,2.5,0.5,50,"g","suesses"],
 ["Gummibärchen",323,6.7,60,0,0,30,"g","suesses"],
+["Haribo Gummibärchen kleine Tüte (10g)",336,0,75.7,0,0,10,"g","suesses"],
 ["Hanuta (1 Stück)",560,7,38,16,2,23,"g","suesses"],
 ["Karamellbonbon (1 Stück)",390,2,55,8,0,5,"g","suesses"],
 ["Kinderschokolade (1 Riegel 12,5g)",535,7,52,17,1,12.5,"g","suesses"],
@@ -1090,6 +1091,7 @@ function addSport(i){const s=SPORTS[i];sportPts+=s.pts;sportLog.push({n:s.n,pts:
 function addCustomSport(){
   const ppm=parseFloat(document.getElementById("cs-sel").value)||0.21;const min=parseFloat(document.getElementById("cs-min").value)||30;const pts=Math.max(1,Math.round(ppm*min));
   const sel=document.getElementById("cs-sel");const name=sel.options[sel.selectedIndex].text+" ("+min+" Min)";
+  if(!confirm(name+" = +"+pts+" Punkte hinzufügen?"))return;
   sportPts+=pts;sportLog.push({n:name,pts});save("pp_sportPts",sportPts);save("pp_sportLog",sportLog);updBudget();renderSportLog();showToast("🏃 +"+pts+" Punkte gutgeschrieben!");
 }
 function removeSport(i){sportPts=Math.max(0,sportPts-sportLog[i].pts);sportLog.splice(i,1);save("pp_sportPts",sportPts);save("pp_sportLog",sportLog);updBudget();renderSportLog();}
