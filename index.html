@@ -833,6 +833,7 @@ const FDB=[
 ["Grüne Bohnen Bonduelle",25,1.6,2.8,0.2,2.5,100,"g","gemuese"],
 ["Kühne Rotkohl",60,1,12,0.1,2,100,"g","gemuese"],
 ["Kühne American Dressing (1 EL)",320,1,8,3,0.5,15,"ml","saucen"],
+["Heinz Tomaten Ketchup (1 Portion)",100,1.3,23,0.1,0.5,15,"g","saucen"],
 ];
 
 const CATS=[
@@ -922,7 +923,9 @@ if(load("pp_logDate","")!==today && load("pp_logDate","")!==""){
   const lastSportPts=load("pp_sportPts",0);
   if(lastLog.length>0){
     let history=load("pp_history",[]);
-    history.unshift({date:lastDate,foodLog:lastLog,sportLog:lastSport,sportPts:lastSportPts,budget:budget});
+    // Remove existing entry for this date if any
+    history=history.filter(h=>h.date!==lastDate);
+    history.unshift({date:lastDate,foodLog:lastLog,sportLog:lastSport,sportPts:lastSportPts,budget:load("pp_budget",38)});
     if(history.length>7) history=history.slice(0,7);
     save("pp_history",history);
   }
@@ -1159,6 +1162,7 @@ function getViewLog(){
   if(viewingDate === "today") return foodLog;
   const history = load("pp_history", []);
   const day = history.find(h => h.date === viewingDate);
+  if(!day) { console.log("Day not found:", viewingDate, "History:", JSON.stringify(history.map(h=>h.date))); }
   return day ? day.foodLog : [];
 }
 
@@ -1166,7 +1170,7 @@ function getViewBudget(){
   if(viewingDate === "today") return budget + sportPts;
   const history = load("pp_history", []);
   const day = history.find(h => h.date === viewingDate);
-  return day ? (day.budget + (day.sportPts||0)) : budget;
+  return day ? ((day.budget||budget) + (day.sportPts||0)) : budget;
 }
 
 function renderLog(){
