@@ -1142,17 +1142,19 @@ function renderDayTabs(){
   if(!el) return;
   const hist=load("pp_history",[]);
   const days=["So","Mo","Di","Mi","Do","Fr","Sa"];
-  function makeBtn(label,date){
-    const active=viewingDate===date;
-    return '<button onclick="viewDay(\"'+date+'\")" style="flex-shrink:0;padding:5px 12px;border-radius:100px;font-size:11px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;background:'+(active?"#2563eb":"white")+';color:'+(active?"white":"#6b7280")+';box-shadow:0 1px 3px rgba(0,0,0,.1)">'+label+"</button>";
-  }
-  let t=makeBtn("Heute","today");
-  hist.forEach(h=>{
+  let t='<button data-day="today" style="flex-shrink:0;padding:5px 12px;border-radius:100px;font-size:11px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;background:'+(viewingDate==="today"?"#2563eb":"white")+';color:'+(viewingDate==="today"?"white":"#6b7280")+';box-shadow:0 1px 3px rgba(0,0,0,.1)">Heute</button>';
+  hist.forEach(function(h){
     const d=new Date(h.date);
     const lbl=days[d.getDay()]+" "+d.getDate()+"."+(d.getMonth()+1)+".";
-    t+=makeBtn(lbl,h.date);
+    const active=viewingDate===h.date;
+    t+='<button data-day="'+h.date+'" style="flex-shrink:0;padding:5px 12px;border-radius:100px;font-size:11px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;background:'+(active?"#2563eb":"white")+';color:'+(active?"white":"#6b7280")+';box-shadow:0 1px 3px rgba(0,0,0,.1)">'+lbl+'</button>';
   });
   el.innerHTML=t;
+  el.querySelectorAll("button").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      viewDay(btn.getAttribute("data-day"));
+    });
+  });
 }
 
 function viewDay(date){
